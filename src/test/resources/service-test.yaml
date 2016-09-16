@@ -1,0 +1,36 @@
+notificationJobCron: 0 0 0 * * ? # run at midnight everyday
+notificationRetryJobCron: 0 0/15 * * * ? # retry every 15 mins
+
+notifyUrl: mockUrl
+notifyApiKey: mockSecret
+notifyServiceId: mockServiceId
+
+templateIdMap:
+    template1: 123
+    template2: 456
+    template3: 789
+
+templatePlaceholderMap:
+    template1:
+    - param11
+    - param12
+    template2:
+    - param21
+    - param22
+    template3:
+    - param31
+    - param32
+
+
+server:
+  type: default
+  applicationConnectors:
+    - type: http
+      port: 8090
+
+logging:
+
+  level: INFO
+
+  appenders:
+    - type: console

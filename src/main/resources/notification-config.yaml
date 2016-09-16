@@ -1,0 +1,50 @@
+notificationRetryJobCron: 0 0/1 * 1/1 * ? * # retry every 1 mins
+
+notifyUrl: https://api.notifications.service.gov.uk
+notifyApiKey: 4108f2e8-7898-4284-a90e-6816883f29f6
+notifyServiceId: f3d8fb42-a34b-4d85-8ac2-a62006a197dc
+
+templateIdMap:
+    ogelService:licenceApproved: 6dce75d3-8132-4c69-a57c-9ecbd62d1c96 # toName, applicationRef
+    ogelService:licencePending: 54805956-dbfa-4751-8392-3dd4ffd179c1 # toName, pendingDate
+    ogelService:licenceRefused: 590bd92e-fc62-4cc3-a725-41ce4120c0bb # toName, supportEmail
+
+templatePlaceholderMap:
+    ogelService:licenceApproved:
+    - toName
+    - applicationRef
+    ogelService:licencePending:
+    - toName
+    - pendingDate
+    ogelService:licenceRefused:
+    - toName
+    - supportEmail
+
+server:
+  type: default
+  applicationConnectors:
+    - type: http
+      port: 8090
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
+      logFormat: '[%d{HH:mm:ss.SSS}] [%-5level] [%class{0}:%method:%line] %msg %n'
+
+database:
+  driverClass: org.sqlite.JDBC
+  url: jdbc:sqlite:localNotification.db
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 30s
+  validationQuery: "SELECT 1"
+  initialSize: 1 # connections
+  minSize: 1 # connections
+  maxSize: 3 # connections
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+adminLogin: user
+adminPassword: password
