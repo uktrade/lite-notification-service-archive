@@ -29,6 +29,9 @@ public class NotificationAppConfig extends Configuration {
   private String notifyServiceId;
 
   @NotEmpty
+  private String maxRetryCount;
+
+  @NotEmpty
   private String notificationRetryJobCron;
 
   @Valid
@@ -60,6 +63,10 @@ public class NotificationAppConfig extends Configuration {
 
   public String getNotifyServiceId() {
     return notifyServiceId;
+  }
+
+  public int getMaxRetryCount() {
+    return Integer.parseInt(maxRetryCount);
   }
 
   public Map<String, String> getTemplateIdMap() {

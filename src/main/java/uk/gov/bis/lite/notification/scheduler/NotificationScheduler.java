@@ -6,6 +6,7 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
+import uk.gov.bis.lite.notification.service.NotificationService;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -17,11 +18,14 @@ public class NotificationScheduler implements Managed {
 
   private final Scheduler scheduler;
   private final NotificationAppConfig config;
+  private final NotificationService notificationService;
 
   @Inject
-  public NotificationScheduler(Scheduler scheduler, NotificationAppConfig config) {
+  public NotificationScheduler(Scheduler scheduler, NotificationAppConfig config,
+                               NotificationService notificationService) {
     this.scheduler = scheduler;
     this.config = config;
+    this.notificationService = notificationService;
   }
 
   @Override
@@ -33,6 +37,8 @@ public class NotificationScheduler implements Managed {
         .withIdentity(jobKey)
         .build();
 
+    jobDetail.getJobDataMap().put("notificationService", notificationService);
+    
     CronTrigger trigger = newTrigger()
         .withIdentity(TriggerKey.triggerKey("notificationRetryJobTrigger"))
         .withSchedule(cronSchedule(config.getNotificationRetryJobCron()))

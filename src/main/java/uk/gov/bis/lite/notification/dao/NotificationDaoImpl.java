@@ -9,6 +9,8 @@ import org.skife.jdbi.v2.sqlobject.Transaction;
 import uk.gov.bis.lite.notification.dao.sqlite.NotificationInterface;
 import uk.gov.bis.lite.notification.model.NotificationData;
 
+import java.util.List;
+
 @Singleton
 public class NotificationDaoImpl implements NotificationDao {
 
@@ -21,13 +23,36 @@ public class NotificationDaoImpl implements NotificationDao {
 
   @Override
   @Transaction
-  public void create(NotificationData notification) {
-
+  public void updateForRetry(NotificationData notification) {
     try (final Handle handle = jdbi.open()) {
       NotificationInterface notificationInterface = handle.attach(NotificationInterface.class);
-      notificationInterface.insert(notification.getTemplateId(), notification.getRecipientEmail());
+      notificationInterface.updateForRetry(
+          notification.getRetrySend(),
+          notification.getRetryCount(),
+          notification.getId());
     }
-
   }
 
+  @Override
+  @Transaction
+  public List<NotificationData> getRetries() {
+    try (final Handle handle = jdbi.open()) {
+      NotificationInterface notificationInterface = handle.attach(NotificationInterface.class);
+      return notificationInterface.getRetries();
+    }
+  }
+
+  @Override
+  @Transaction
+  public void create(NotificationData notification) {
+    try (final Handle handle = jdbi.open()) {
+      NotificationInterface notificationInterface = handle.attach(NotificationInterface.class);
+      notificationInterface.insert(
+          notification.getTemplateId(),
+          notification.getRecipientEmail(),
+          notification.getNameValueJson(),
+          notification.getRetrySend(),
+          notification.getRetryCount());
+    }
+  }
 }

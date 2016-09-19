@@ -13,20 +13,38 @@ public class NotificationData {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationData.class);
 
-  private Long id;
+  private int id;
   private String templateId;
   private String recipientEmail;
   private String nameValueJson;
+  private int retrySend; // represents 'retry' status, 1=true, 0=false
+  private int retryCount;
 
-  public NotificationData(Long id, String templateId, String recipientEmail) {
+  public NotificationData(int id) {
     this.id = id;
-    this.templateId = templateId;
-    this.recipientEmail = recipientEmail;
   }
 
   public NotificationData(String templateId, String recipientEmail) {
     this.templateId = templateId;
     this.recipientEmail = recipientEmail;
+    this.retrySend = 1;
+    this.retryCount = 0;
+  }
+
+  public boolean isRetry() {
+    return retrySend == 1;
+  }
+
+  public void setAsSent() {
+    this.retrySend = 0;
+  }
+
+  public void incrementRetry(int limit) {
+    if(this.retryCount >= limit) {
+      this.retrySend = 1;
+    } else {
+      this.retryCount++;
+    }
   }
 
   public HashMap<String, String> getNameValueMap() {
@@ -36,7 +54,7 @@ public class NotificationData {
       TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {};
       notifyMap = mapper.readValue(nameValueJson, typeRef);
     } catch (IOException e) {
-      LOGGER.error("getNameValueMap IOException", e);
+      LOGGER.error("IOException", e);
     }
     return notifyMap;
   }
@@ -46,7 +64,7 @@ public class NotificationData {
       ObjectMapper mapper = new ObjectMapper();
       nameValueJson = mapper.writeValueAsString(nameValueMap);
     } catch (IOException e) {
-      LOGGER.error("setNameValueJson IOException", e);
+      LOGGER.error("IOException", e);
     }
   }
 
@@ -54,7 +72,7 @@ public class NotificationData {
     return nameValueJson;
   }
 
-  public Long getId() {
+  public int getId() {
     return id;
   }
 
@@ -64,5 +82,33 @@ public class NotificationData {
 
   public String getRecipientEmail() {
     return recipientEmail;
+  }
+
+  public int getRetrySend() {
+    return retrySend;
+  }
+
+  public int getRetryCount() {
+    return retryCount;
+  }
+
+  public void setTemplateId(String templateId) {
+    this.templateId = templateId;
+  }
+
+  public void setRecipientEmail(String recipientEmail) {
+    this.recipientEmail = recipientEmail;
+  }
+
+  public void setNameValueJson(String nameValueJson) {
+    this.nameValueJson = nameValueJson;
+  }
+
+  public void setRetrySend(int retrySend) {
+    this.retrySend = retrySend;
+  }
+
+  public void setRetryCount(int retryCount) {
+    this.retryCount = retryCount;
   }
 }

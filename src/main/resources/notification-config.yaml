@@ -1,8 +1,11 @@
-notificationRetryJobCron: 0 0/1 * 1/1 * ? * # retry every 1 mins
+notificationRetryJobCron: 0 0,5,10,15,20,25,30,35,40,45,50,55 * * * ? # every 5 minutes
+#notificationRetryJobCron: 0 0/1 * 1/1 * ? * # retry every 1 mins
+#notificationRetryJobCron: 0/20 * * * * ? # retry every 20 seconds
 
 notifyUrl: https://api.notifications.service.gov.uk
 notifyApiKey: 4108f2e8-7898-4284-a90e-6816883f29f6
 notifyServiceId: f3d8fb42-a34b-4d85-8ac2-a62006a197dc
+maxRetryCount: 3
 
 templateIdMap:
     ogelService:licenceApproved: 6dce75d3-8132-4c69-a57c-9ecbd62d1c96 # toName, applicationRef

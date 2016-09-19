@@ -2,6 +2,7 @@ package uk.gov.bis.lite.notification.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
@@ -23,83 +24,121 @@ public class NotificationService {
   private String notifyUrl;
   private String notifyApiKey;
   private String notifyServiceId;
-  private NotificationClient notificationClient;
-  private NotificationDao notificationDao;
+  private int maxRetryCount;
 
-  private String NOTIFY_DELIVERED = "delivered";
-  private String NOTIFY_SENDING = "sending";
-  private String NOTIFY_FAILED = "failed";
+  private NotificationClient client;
+  private NotificationDao dao;
+
+  private boolean mockClient = false; // used for dev testing of retry mechanism
 
   @Inject
-  public NotificationService(NotificationAppConfig config, NotificationDao notificationDao) {
+  public NotificationService(NotificationAppConfig config, NotificationDao dao) {
     this.notifyUrl = config.getNotifyUrl();
     this.notifyApiKey = config.getNotifyApiKey();
     this.notifyServiceId = config.getNotifyServiceId();
-    this.notificationDao = notificationDao;
+    this.maxRetryCount = config.getMaxRetryCount();
+    this.dao = dao;
   }
 
   @Inject
   public void init() {
-    notificationClient = new NotificationClient(notifyApiKey, notifyServiceId, notifyUrl);
+    client = new NotificationClient(notifyApiKey, notifyServiceId, notifyUrl);
   }
 
   /**
-   * The NotificationClient sendEmail method requires a HashMap<String, String>
+   * Send an Email
    */
   public void sendEmail(String templateId, String recipientEmail, Map<String, String> nameValueMap) {
-    HashMap<String, String> notifyMap = new HashMap<>();
+    HashMap<String, String> notifyMap = new HashMap<>(); // NotificationClient requires a HashMap<String, String>
     if (nameValueMap != null) {
       notifyMap = new HashMap<>(nameValueMap);
     }
-
-    try {
-      NotificationResponse response = notificationClient.sendEmail(templateId, recipientEmail, notifyMap);
-
-      if (response != null) {
-        Notification notifyNotification = notificationClient.getNotificationById(response.getNotificationId());
-        String status = notifyNotification.getStatus();
-        if (status != null) {
-          if (!(status.equals(NOTIFY_SENDING) || status.equals(NOTIFY_DELIVERED))) {
-            LOGGER.info("Saving NotificationData with status: " + status);
-            saveNotificationForRetry(templateId, recipientEmail, notifyMap);
-          }
-        } else {
-          LOGGER.info("Saving NotificationData with NULL status");
-          saveNotificationForRetry(templateId, recipientEmail, notifyMap);
-        }
-      } else {
-        LOGGER.info("NotificationResponse NULL - saving NotificationData");
-        saveNotificationForRetry(templateId, recipientEmail, notifyMap);
-      }
-
-    } catch (NotificationClientException e) {
-      LOGGER.error("sendEmail NotificationClientException", e);
+    NotificationData data = initNotificationData(templateId, recipientEmail, notifyMap);
+    boolean sent = doSendNotification(data);
+    if (!sent) {
+      LOGGER.info("NotificationResponse is null - saving NotificationData to persistent store");
+      dao.create(data);
     }
   }
 
   /**
-   * We save notification data in order that the retry mechanism can attempt to resend notification later
+   * Get any unsent notifications, retry, and update
    */
-  private void saveNotificationForRetry(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
+  public void retryUnsentEmails() {
+    dao.getRetries().forEach(this::doRetryNotification);
+  }
+
+  /**
+   * Attempts send, updates retry data accordingly
+   */
+  private void doRetryNotification(NotificationData data) {
+    LOGGER.error("doRetryNotification: " + data.getId());
+    boolean sent = doSendNotification(data);
+    if (sent) {
+      data.setAsSent();
+    } else {
+      data.incrementRetry(maxRetryCount);
+    }
+    dao.updateForRetry(data);
+  }
+
+  /**
+   * Uses NotificationClient to send notification.
+   * We returns TRUE for a non null Response - false otherwise
+   */
+  private boolean doSendNotification(NotificationData data) {
+    boolean sent = false;
+    if (!mockClient) {
+      try {
+        NotificationResponse response = client.sendEmail(data.getTemplateId(), data.getRecipientEmail(), data.getNameValueMap());
+        if (response != null) {
+          sent = true;
+        } else {
+          logResponse(response);
+        }
+      } catch (NotificationClientException e) {
+        LOGGER.error("NotificationClientException", e);
+      }
+    } else {
+      sent = randomMockSendResult();
+    }
+    return sent;
+  }
+
+  /**
+   * We currently do not use data retrieved from Response - this is here for future reference
+   * and test retrieving Notification status
+   */
+  private void logResponse(NotificationResponse response) {
+    try {
+      Notification notifyNotification = client.getNotificationById(response.getNotificationId());
+      String status = notifyNotification.getStatus();
+      if (status != null) {
+        if (!(status.equals("created") || status.equals("sending") || status.equals("delivered"))) {
+          LOGGER.warn("Notification with status: " + status); // status probably "failed"
+        }
+      } else {
+        LOGGER.warn("Notification with NULL status");
+      }
+    } catch (NotificationClientException e) {
+      LOGGER.warn("NotificationClientException", e);
+    } catch (JSONException e) {
+      LOGGER.warn("JSONException"); // this exception gets thrown quite frequently, so not logging full stack trace
+    }
+  }
+
+  /**
+   * Create and return new instance of NotificationData
+   */
+  private NotificationData initNotificationData(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
     NotificationData data = new NotificationData(templateId, recipientEmail);
     data.setNameValueJson(notifyMap);
-    notificationDao.create(data);
-
-    LOGGER.info("saveNotificationForRetry: " + data.getNameValueJson());
-    data.getNameValueMap().forEach((key, value) -> {
-      LOGGER.info("Key : " + key + " Value : " + value);
-    });
+    return data;
   }
 
-  private static void logRequest(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
-    LOGGER.info("Sending email request: " + templateId + "/" + recipientEmail);
-    notifyMap.forEach((key, value) -> {
-      LOGGER.info("Key : " + key + " Value : " + value);
-    });
-  }
-
-  private static void logResponse(NotificationResponse response) {
-    LOGGER.info("Response notificationId/templateVersion: " + response.getNotificationId() + "/" + response.getTemplateVersion());
-    LOGGER.info("Response body: " + response.getBody());
+  private boolean randomMockSendResult() {
+    boolean result = Math.random() < 0.5;
+    LOGGER.error("randomMockSendResult: " + result);
+    return result;
   }
 }
