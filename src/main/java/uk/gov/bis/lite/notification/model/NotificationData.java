@@ -41,7 +41,7 @@ public class NotificationData {
 
   public void incrementRetry(int limit) {
     if(this.retryCount >= limit) {
-      this.retrySend = 1;
+      this.retrySend = 0;
     } else {
       this.retryCount++;
     }
