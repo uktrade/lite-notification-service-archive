@@ -1,7 +1,8 @@
 package uk.gov.bis.lite.notification.resource;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.service.NotificationService;
@@ -13,8 +14,9 @@ import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/notification")
@@ -33,36 +35,37 @@ public class NotificationResource {
 
   @POST
   @Consumes("application/json")
+  @Produces("application/json")
   @Path("/send-email")
-  public Response emailNotification(@QueryParam("template") String template,
-                                    @QueryParam("recipientEmail") String recipientEmail,
+  public Response emailNotification(@QueryParam("template") @NotEmpty String template,
+                                    @QueryParam("recipientEmail") @NotEmpty String recipientEmail,
                                     Map<String, String> nameValueMap) {
-
-    if (StringUtils.isBlank(template)) {
-      badRequest("template parameter is mandatory");
-    }
-    if (StringUtils.isBlank(recipientEmail)) {
-      badRequest("recipientEmail parameter is mandatory");
-    }
 
     logParams(template, recipientEmail, nameValueMap);
 
-    // We use the TemplateService to check if we have a valid template with a valid nameValueMap
+    // Check if we have a valid template with a valid nameValueMap
     Optional<String> optId = templateService.getTemplateId(template);
     if (optId.isPresent()) {
       if (templateService.isValidNameValueMap(template, nameValueMap)) {
         notificationService.sendEmail(optId.get(), recipientEmail, nameValueMap);
       } else {
-        badRequest("JSON body of name value pairs incorrect");
+        return badRequest("JSON body of name value pairs incorrect");
       }
     } else {
-      badRequest("Unknown notification template");
+      return badRequest("Unknown notification template");
     }
-    return Response.ok("Email notification successfully received").build();
+    return goodRequest();
   }
 
-  private void badRequest(String message) {
-    throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
+  private Response badRequest(String message) {
+    return Response.status(Response.Status.BAD_REQUEST)
+        .entity(ImmutableMap.of("code", Response.Status.BAD_REQUEST, "message", message))
+        .type(MediaType.APPLICATION_JSON_TYPE)
+        .build();
+  }
+
+  private Response goodRequest() {
+    return Response.ok("{\"status\": \"success\"}", MediaType.APPLICATION_JSON).build();
   }
 
   private static void logParams(String template, String recipientEmail, Map<String, String> nameValueMap) {
