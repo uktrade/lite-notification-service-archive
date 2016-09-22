@@ -9,22 +9,10 @@ maxRetryCount: 3
 
 templateIdMap:
     permissionsFinder:applicationReference: 09eb70ed-e5c7-4d28-87aa-553addfbcfc2 # applicationReference
-    ogelService:licenceApproved: 6dce75d3-8132-4c69-a57c-9ecbd62d1c96 # toName, applicationRef
-    ogelService:licencePending: 54805956-dbfa-4751-8392-3dd4ffd179c1 # toName, pendingDate
-    ogelService:licenceRefused: 590bd92e-fc62-4cc3-a725-41ce4120c0bb # toName, supportEmail
 
 templatePlaceholderMap:
     permissionsFinder:applicationReference:
     - applicationReference
-    ogelService:licenceApproved:
-    - toName
-    - applicationRef
-    ogelService:licencePending:
-    - toName
-    - pendingDate
-    ogelService:licenceRefused:
-    - toName
-    - supportEmail
 
 server:
   type: default
