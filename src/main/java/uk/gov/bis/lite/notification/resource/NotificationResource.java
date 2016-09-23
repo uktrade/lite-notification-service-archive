@@ -2,7 +2,7 @@ package uk.gov.bis.lite.notification.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.service.NotificationService;
@@ -37,22 +37,28 @@ public class NotificationResource {
   @Consumes("application/json")
   @Produces("application/json")
   @Path("/send-email")
-  public Response emailNotification(@QueryParam("template") @NotEmpty String template,
-                                    @QueryParam("recipientEmail") @NotEmpty String recipientEmail,
+  public Response emailNotification(@QueryParam("template") String template,
+                                    @QueryParam("recipientEmail") String recipientEmail,
                                     Map<String, String> nameValueMap) {
 
+    if (StringUtils.isBlank(template)) {
+      return badRequest("template parameter is mandatory");
+    }
+    if (StringUtils.isBlank(recipientEmail)) {
+      return badRequest("recipientEmail parameter is mandatory");
+    }
     logParams(template, recipientEmail, nameValueMap);
 
-    // Check if we have a valid template with a valid nameValueMap
+    // Check if we have a valid template with a matched nameValueMap/placeholder list
     Optional<String> optId = templateService.getTemplateId(template);
     if (optId.isPresent()) {
-      if (templateService.isValidNameValueMap(template, nameValueMap)) {
+      if (templateService.isMatchedForPlaceholders(template, nameValueMap)) {
         notificationService.sendEmail(optId.get(), recipientEmail, nameValueMap);
       } else {
-        return badRequest("JSON body of name value pairs incorrect");
+        return badRequest(templateService.getMismatchForPlaceholdersDetail(template, nameValueMap));
       }
     } else {
-      return badRequest("Unknown notification template");
+      return badRequest("Unknown notification template: " + template);
     }
     return goodRequest();
   }

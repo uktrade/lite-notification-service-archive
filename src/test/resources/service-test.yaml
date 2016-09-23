@@ -1,9 +1,9 @@
-notificationJobCron: 0 0 0 * * ? # run at midnight everyday
-notificationRetryJobCron: 0 0/15 * * * ? # retry every 15 mins
+notificationRetryJobCron: 0 0,5,10,15,20,25,30,35,40,45,50,55 * * * ? # every 5 minutes
 
-notifyUrl: mockUrl
-notifyApiKey: mockSecret
-notifyServiceId: mockServiceId
+notifyUrl: https://api.notifications.service.gov.uk
+notifyApiKey: 4108f2e8-7898-4284-a90e-6816883f29f6
+notifyServiceId: f3d8fb42-a34b-4d85-8ac2-a62006a197dc
+maxRetryCount: 3
 
 templateIdMap:
     template1: 123
@@ -12,15 +12,13 @@ templateIdMap:
 
 templatePlaceholderMap:
     template1:
-    - param11
-    - param12
+    - name1
     template2:
-    - param21
-    - param22
+    - name1
+    - name2
     template3:
-    - param31
-    - param32
-
+    - name1
+    - name2
 
 server:
   type: default
@@ -29,8 +27,23 @@ server:
       port: 8090
 
 logging:
-
   level: INFO
-
   appenders:
     - type: console
+
+database:
+  driverClass: org.sqlite.JDBC
+  url: jdbc:sqlite:localNotification.db
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 30s
+  validationQuery: "SELECT 1"
+  initialSize: 1 # connections
+  minSize: 1 # connections
+  maxSize: 3 # connections
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+adminLogin: user
+adminPassword: password

@@ -27,7 +27,7 @@ public class NotificationDaoImpl implements NotificationDao {
     try (final Handle handle = jdbi.open()) {
       NotificationInterface notificationInterface = handle.attach(NotificationInterface.class);
       notificationInterface.updateForRetry(
-          notification.getRetrySend(),
+          notification.getStatus().name(),
           notification.getRetryCount(),
           notification.getId());
     }
@@ -51,8 +51,9 @@ public class NotificationDaoImpl implements NotificationDao {
           notification.getTemplateId(),
           notification.getRecipientEmail(),
           notification.getNameValueJson(),
-          notification.getRetrySend(),
-          notification.getRetryCount());
+          notification.getStatus().name(),
+          notification.getRetryCount(),
+          notification.getType().name());
     }
   }
 }

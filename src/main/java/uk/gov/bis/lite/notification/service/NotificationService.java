@@ -29,8 +29,6 @@ public class NotificationService {
   private NotificationClient client;
   private NotificationDao dao;
 
-  private boolean mockClient = false; // used for dev testing of retry mechanism
-
   @Inject
   public NotificationService(NotificationAppConfig config, NotificationDao dao) {
     this.notifyUrl = config.getNotifyUrl();
@@ -53,12 +51,14 @@ public class NotificationService {
     if (nameValueMap != null) {
       notifyMap = new HashMap<>(nameValueMap);
     }
-    NotificationData data = initNotificationData(templateId, recipientEmail, notifyMap);
-    boolean sent = doSendNotification(data);
-    if (!sent) {
-      LOGGER.info("NotificationResponse is null - saving NotificationData to persistent store");
-      dao.create(data);
+    NotificationData data = initEmailNotificationData(templateId, recipientEmail, notifyMap);
+    boolean success = doSendNotification(data);
+    if (success) {
+      data.setStatus(NotificationData.Status.SUCCESS);
+    } else {
+      data.setStatus(NotificationData.Status.RETRY);
     }
+    dao.create(data);
   }
 
   /**
@@ -73,11 +73,14 @@ public class NotificationService {
    */
   private void doRetryNotification(NotificationData data) {
     LOGGER.error("doRetryNotification: " + data.getId());
-    boolean sent = doSendNotification(data);
-    if (sent) {
-      data.setAsSent();
+    boolean success = doSendNotification(data);
+    if (success) {
+      data.setStatus(NotificationData.Status.SUCCESS);
     } else {
-      data.incrementRetry(maxRetryCount);
+      data.incrementRetryCount();
+      if(data.getRetryCount() >= maxRetryCount) {
+        data.setStatus(NotificationData.Status.FAILED);
+      }
     }
     dao.updateForRetry(data);
   }
@@ -88,19 +91,15 @@ public class NotificationService {
    */
   private boolean doSendNotification(NotificationData data) {
     boolean sent = false;
-    if (!mockClient) {
-      try {
-        NotificationResponse response = client.sendEmail(data.getTemplateId(), data.getRecipientEmail(), data.getNameValueMap());
-        if (response != null) {
-          sent = true;
-        } else {
-          logResponse(response);
-        }
-      } catch (NotificationClientException e) {
-        LOGGER.error("NotificationClientException", e);
+    try {
+      NotificationResponse response = client.sendEmail(data.getTemplateId(), data.getRecipientEmail(), data.getNameValueMap());
+      if (response != null) {
+        sent = true;
+      } else {
+        logResponse(response);
       }
-    } else {
-      sent = randomMockSendResult();
+    } catch (NotificationClientException e) {
+      LOGGER.error("NotificationClientException", e);
     }
     return sent;
   }
@@ -130,15 +129,10 @@ public class NotificationService {
   /**
    * Create and return new instance of NotificationData
    */
-  private NotificationData initNotificationData(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
-    NotificationData data = new NotificationData(templateId, recipientEmail);
+  private NotificationData initEmailNotificationData(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
+    NotificationData data = new NotificationData(NotificationData.Type.EMAIL, templateId);
+    data.setRecipientEmail(recipientEmail);
     data.setNameValueJson(notifyMap);
     return data;
-  }
-
-  private boolean randomMockSendResult() {
-    boolean result = Math.random() < 0.5;
-    LOGGER.error("randomMockSendResult: " + result);
-    return result;
   }
 }

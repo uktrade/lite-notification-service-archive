@@ -14,7 +14,8 @@ public class NotificationRetryJob implements Job {
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     LOGGER.info("Starting NotificationRetryJob...");
-    NotificationService service = (NotificationService) context.getMergedJobDataMap().get("notificationService");
+    NotificationService service = (NotificationService) context.getMergedJobDataMap()
+        .get(NotificationScheduler.NOTIFICATION_SERVICE_NAME);
     service.retryUnsentEmails();
   }
 }

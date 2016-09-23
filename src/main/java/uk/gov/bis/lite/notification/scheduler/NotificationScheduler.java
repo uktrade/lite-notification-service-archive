@@ -19,6 +19,7 @@ public class NotificationScheduler implements Managed {
   private final Scheduler scheduler;
   private final NotificationAppConfig config;
   private final NotificationService notificationService;
+  public static final String NOTIFICATION_SERVICE_NAME = "notificationService";
 
   @Inject
   public NotificationScheduler(Scheduler scheduler, NotificationAppConfig config,
@@ -37,8 +38,8 @@ public class NotificationScheduler implements Managed {
         .withIdentity(jobKey)
         .build();
 
-    jobDetail.getJobDataMap().put("notificationService", notificationService);
-    
+    jobDetail.getJobDataMap().put(NOTIFICATION_SERVICE_NAME, notificationService);
+
     CronTrigger trigger = newTrigger()
         .withIdentity(TriggerKey.triggerKey("notificationRetryJobTrigger"))
         .withSchedule(cronSchedule(config.getNotificationRetryJobCron()))

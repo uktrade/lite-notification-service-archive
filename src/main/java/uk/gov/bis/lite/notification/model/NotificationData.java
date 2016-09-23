@@ -15,36 +15,34 @@ public class NotificationData {
 
   private int id;
   private String templateId;
+  private Type type;
   private String recipientEmail;
   private String nameValueJson;
-  private int retrySend; // represents 'retry' status, 1=true, 0=false
+  private Status status;
+  private String created;
   private int retryCount;
+
+  public enum Type {
+    EMAIL, SMS;
+  }
+
+  public enum Status {
+    CREATED, SUCCESS, RETRY, FAILED;
+  }
 
   public NotificationData(int id) {
     this.id = id;
   }
 
-  public NotificationData(String templateId, String recipientEmail) {
+  public NotificationData(Type type, String templateId) {
+    this.type = type;
     this.templateId = templateId;
-    this.recipientEmail = recipientEmail;
-    this.retrySend = 1;
+    this.status = Status.CREATED;
     this.retryCount = 0;
   }
 
-  public boolean isRetry() {
-    return retrySend == 1;
-  }
-
-  public void setAsSent() {
-    this.retrySend = 0;
-  }
-
-  public void incrementRetry(int limit) {
-    if(this.retryCount >= limit) {
-      this.retrySend = 0;
-    } else {
-      this.retryCount++;
-    }
+  public void incrementRetryCount() {
+    this.retryCount++;
   }
 
   public HashMap<String, String> getNameValueMap() {
@@ -84,10 +82,6 @@ public class NotificationData {
     return recipientEmail;
   }
 
-  public int getRetrySend() {
-    return retrySend;
-  }
-
   public int getRetryCount() {
     return retryCount;
   }
@@ -104,11 +98,31 @@ public class NotificationData {
     this.nameValueJson = nameValueJson;
   }
 
-  public void setRetrySend(int retrySend) {
-    this.retrySend = retrySend;
-  }
-
   public void setRetryCount(int retryCount) {
     this.retryCount = retryCount;
+  }
+
+  public Type getType() {
+    return type;
+  }
+
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public void setStatus(Status status) {
+    this.status = status;
+  }
+
+  public String getCreated() {
+    return created;
+  }
+
+  public void setCreated(String created) {
+    this.created = created;
   }
 }

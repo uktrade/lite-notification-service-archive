@@ -1,9 +1,12 @@
 package uk.gov.bis.lite.notification;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.flywaydb.core.Flyway;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -26,16 +29,26 @@ public class NotificationIntegrationTest {
   public final DropwizardAppRule<NotificationAppConfig> RULE =
       new DropwizardAppRule<>(NotificationApp.class, resourceFilePath("service-test.yaml"));
 
+  private Flyway flyway = new Flyway();
+
+  @Before
+  public void setupDatabase() {
+    DataSourceFactory f = RULE.getConfiguration().getDataSourceFactory();
+    flyway.setDataSource(f.getUrl(), f.getUser(), f.getPassword());
+    flyway.migrate();
+  }
+
   @Test
   @Ignore
   public void testNotification() throws Exception {
 
     JerseyClient client = new JerseyClientBuilder().build();
 
-    String requestJson = "{\"toName\":" + "\"dan1\"," +
-        "\"applicationRef\":\"ref1234\"}";
+    String requestJson = "{\"name1\": \"value1\"}";
 
-    Response response = client.target("http://localhost:8090/notification/send-email?template=ogelService:licenceApproved&recipientEmail=dan.haynes@digital.bis.gov.uk")
+    Response response = client.target("http://localhost:8090/notification/send-email")
+        .queryParam("template", "template1")
+        .queryParam("recipientEmail", "dan.haynes@digital.bis.gov.uk")
         .request()
         .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON_TYPE));
 

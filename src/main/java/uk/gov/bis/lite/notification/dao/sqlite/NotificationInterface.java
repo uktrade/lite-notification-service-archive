@@ -14,24 +14,25 @@ public interface NotificationInterface {
   @Mapper(NotificationMapper.class)
   NotificationData findById(@Bind("id") int id);
 
-  @SqlUpdate("INSERT INTO LOCAL_NOTIFICATION (TEMPLATE_ID, RECIPIENT_EMAIL, NAME_VALUE_JSON, RETRY_SEND, RETRY_COUNT) " +
-      "VALUES (:templateId, :recipientEmail, :nameValueJson, :retrySend, :retryCount)")
+  @SqlUpdate("INSERT INTO LOCAL_NOTIFICATION (TEMPLATE_ID, RECIPIENT_EMAIL, NAME_VALUE_JSON, STATUS, RETRY_COUNT, TYPE) " +
+      "VALUES (:templateId, :recipientEmail, :nameValueJson, :status, :retryCount, :type)")
   void insert(@Bind("templateId") String templateId,
               @Bind("recipientEmail") String recipientEmail,
               @Bind("nameValueJson") String nameValueJson,
-              @Bind("retrySend") int retrySend,
-              @Bind("retryCount") int retryCount);
+              @Bind("status") String status,
+              @Bind("retryCount") int retryCount,
+              @Bind("type") String type);
 
 
-  @SqlQuery("SELECT * FROM LOCAL_NOTIFICATION WHERE RETRY_SEND = 1")
+  @SqlQuery("SELECT * FROM LOCAL_NOTIFICATION WHERE STATUS = 'RETRY'")
   @Mapper(NotificationMapper.class)
   List<NotificationData> getRetries();
 
   @SqlUpdate("UPDATE LOCAL_NOTIFICATION " +
-              "SET    RETRY_SEND = :retrySend, " +
+              "SET    STATUS = :status, " +
               "       RETRY_COUNT = :retryCount " +
               "WHERE  ID = :id")
-  Integer updateForRetry(@Bind("retrySend") int retrySend,
+  Integer updateForRetry(@Bind("status") String status,
                          @Bind("retryCount") int retryCount,
                          @Bind("id") int id);
 }
