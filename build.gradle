@@ -1,6 +1,7 @@
 plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
 group 'uk.gov.bis.lite'
@@ -42,6 +43,16 @@ dependencies {
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
     exclude group: 'junit', module: 'junit'
   }
+}
+
+shadowJar {
+  baseName = 'lite-notification-service'
+  classifier = ''
+  mergeServiceFiles()
+}
+
+build {
+  dependsOn shadowJar
 }
 
 flyway {
