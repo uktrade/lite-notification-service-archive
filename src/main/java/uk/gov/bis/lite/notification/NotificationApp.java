@@ -1,13 +1,10 @@
 package uk.gov.bis.lite.notification;
 
-import ch.qos.logback.classic.AsyncAppender;
-import ch.qos.logback.classic.Logger;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.flywaydb.core.Flyway;
-import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
 import ru.vyarus.dropwizard.guice.module.installer.feature.ManagedInstaller;
 import ru.vyarus.dropwizard.guice.module.installer.feature.jersey.ResourceInstaller;
@@ -35,11 +32,6 @@ public class NotificationApp extends Application<NotificationAppConfig> {
   public void run(NotificationAppConfig configuration, Environment environment) throws Exception {
 
     environment.jersey().register(NotificationServiceException.ServiceExceptionMapper.class);
-
-    // Logback update
-    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    AsyncAppender appender = (AsyncAppender) root.getAppender("async-console-appender");
-    appender.setIncludeCallerData(true);
 
     // Perform/validate flyway migration on startup
     DataSourceFactory dataSourceFactory = configuration.getDataSourceFactory();

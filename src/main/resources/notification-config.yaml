@@ -24,6 +24,7 @@ logging:
   level: INFO
   appenders:
     - type: console
+      includeCallerData : true
       logFormat: '[%d{HH:mm:ss.SSS}] [%-5level] [%class{0}:%method:%line] %msg %n'
 
 database:
