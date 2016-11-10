@@ -14,6 +14,9 @@ templateIdMap:
     ogelRegistration:adminApprovalRequired: 23c3e646-b621-4b39-9901-d0218e21d58d
     ogelRegistration:registrationApproved: 70499bb2-04b5-4955-8fc0-2e0a6cbbf12e
     ogelRegistration:registrationApprovedSiteChanged: 2c83b68f-04fd-4695-9370-aece6d793f70
+    ogelRegistration:userAccountConfigured: e1a00f70-52dc-43fd-ae6c-eecb03c62bfe
+    ogelRegistration:registrationDenied: 6e2ad997-c7d1-4fa2-8447-6fad997fefbb
+    ogelRegistration:registrationBlacklisted: edbc68a0-1045-460e-a99b-67a5161f9054
 
 templatePlaceholderMap:
     permissionsFinder:applicationReference:
@@ -47,6 +50,17 @@ templatePlaceholderMap:
     - newSite
     - viewLicenceUrl
     - spireUrl
+    ogelRegistration:userAccountConfigured:
+    - applicantName
+    - customerName
+    - permissionLevel
+    - authorisedSites
+    ogelRegistration:registrationDenied:
+    - applicantName
+    - customerName
+    ogelRegistration:registrationBlacklisted:
+    - applicantName
+    - customerName
 
 server:
   type: default
