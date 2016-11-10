@@ -9,16 +9,50 @@ maxRetryCount: 3
 
 templateIdMap:
     permissionsFinder:applicationReference: 09eb70ed-e5c7-4d28-87aa-553addfbcfc2 # applicationReference
+    ogelRegistration:registrationComplete: 90389188-8587-4412-a973-b8e9bc67f7bd
+    ogelRegistration:adminApprovalAccessRequest: 973eb1fb-cdc6-47db-a618-625d4e0e5e04
+    ogelRegistration:adminApprovalRequired: 23c3e646-b621-4b39-9901-d0218e21d58d
+    ogelRegistration:registrationApproved: 70499bb2-04b5-4955-8fc0-2e0a6cbbf12e
+    ogelRegistration:registrationApprovedSiteChanged: 2c83b68f-04fd-4695-9370-aece6d793f70
 
 templatePlaceholderMap:
     permissionsFinder:applicationReference:
     - applicationReference
+    ogelRegistration:registrationComplete:
+    - applicantName
+    - spireUrl
+    ogelRegistration:adminApprovalRequired:
+    - applicantName
+    - customerName
+    ogelRegistration:adminApprovalAccessRequest:
+    - adminName
+    - fullName
+    - userId
+    - emailAddress
+    - customerName
+    - ogelType
+    - viewSummaryUrl
+    - adminApprovalUrl
+    ogelRegistration:registrationApproved:
+    - applicantName
+    - customerName
+    - adminName
+    - viewLicenceUrl
+    - spireUrl
+    ogelRegistration:registrationApprovedSiteChanged:
+    - applicantName
+    - customerName
+    - adminName
+    - originalSite
+    - newSite
+    - viewLicenceUrl
+    - spireUrl
 
 server:
   type: default
   applicationConnectors:
     - type: http
-      port: 8095
+      port: 8098
 
 logging:
   level: INFO
