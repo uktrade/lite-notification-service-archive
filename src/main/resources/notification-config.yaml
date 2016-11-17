@@ -30,7 +30,7 @@ templatePlaceholderMap:
     - customerName
     ogelRegistration:adminApprovalAccessRequest:
     - adminName
-    - fullName
+    - applicantName
     - userId
     - emailAddress
     - customerName
