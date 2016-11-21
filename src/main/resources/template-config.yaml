@@ -1,0 +1,59 @@
+templateIdMap:
+    permissionsFinder:applicationReference: 09eb70ed-e5c7-4d28-87aa-553addfbcfc2 # applicationReference
+    ogelRegistration:registrationComplete: 90389188-8587-4412-a973-b8e9bc67f7bd
+    ogelRegistration:adminApprovalAccessRequest: 973eb1fb-cdc6-47db-a618-625d4e0e5e04
+    ogelRegistration:adminApprovalRequired: 23c3e646-b621-4b39-9901-d0218e21d58d
+    ogelRegistration:registrationApproved: 70499bb2-04b5-4955-8fc0-2e0a6cbbf12e
+    ogelRegistration:registrationApprovedSiteChanged: 2c83b68f-04fd-4695-9370-aece6d793f70
+    ogelRegistration:userAccountConfigured: e1a00f70-52dc-43fd-ae6c-eecb03c62bfe
+    ogelRegistration:registrationDenied: 60fbb15e-0896-4c0a-af07-f30a2ac80f2d
+    ogelRegistration:registrationDeniedFeedback: 6e2ad997-c7d1-4fa2-8447-6fad997fefbb
+    ogelRegistration:registrationBlacklisted: edbc68a0-1045-460e-a99b-67a5161f9054
+
+templatePlaceholderMap:
+    permissionsFinder:applicationReference:
+    - applicationReference
+    ogelRegistration:registrationComplete:
+    - applicantName
+    - spireUrl
+    ogelRegistration:adminApprovalRequired:
+    - applicantName
+    - customerName
+    ogelRegistration:adminApprovalAccessRequest:
+    - adminName
+    - applicantName
+    - userId
+    - emailAddress
+    - customerName
+    - ogelType
+    - viewSummaryUrl
+    - adminApprovalUrl
+    ogelRegistration:registrationApproved:
+    - applicantName
+    - customerName
+    - adminName
+    - viewLicenceUrl
+    - spireUrl
+    ogelRegistration:registrationApprovedSiteChanged:
+    - applicantName
+    - customerName
+    - adminName
+    - originalSite
+    - newSite
+    - viewLicenceUrl
+    - spireUrl
+    ogelRegistration:userAccountConfigured:
+    - applicantName
+    - customerName
+    - permissionLevel
+    - authorisedSites
+    ogelRegistration:registrationDenied:
+    - applicantName
+    - customerName
+    ogelRegistration:registrationDeniedFeedback:
+    - applicantName
+    - customerName
+    - denialFeedback
+    ogelRegistration:registrationBlacklisted:
+    - applicantName
+    - customerName

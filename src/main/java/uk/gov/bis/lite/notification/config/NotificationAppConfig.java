@@ -14,12 +14,6 @@ import javax.validation.constraints.NotNull;
 public class NotificationAppConfig extends Configuration {
 
   @NotEmpty
-  private Map<String, String> templateIdMap;
-
-  @NotEmpty
-  private Map<String, List<String>> templatePlaceholderMap;
-
-  @NotEmpty
   private String notifyUrl;
 
   @NotEmpty
@@ -67,14 +61,6 @@ public class NotificationAppConfig extends Configuration {
 
   public int getMaxRetryCount() {
     return Integer.parseInt(maxRetryCount);
-  }
-
-  public Map<String, String> getTemplateIdMap() {
-    return templateIdMap;
-  }
-
-  public Map<String, List<String>> getTemplatePlaceholderMap() {
-    return templatePlaceholderMap;
   }
 
   public String getAdminLogin() {

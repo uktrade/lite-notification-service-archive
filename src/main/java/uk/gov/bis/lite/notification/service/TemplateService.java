@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
+import uk.gov.bis.lite.notification.config.TemplateConfig;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,7 @@ public class TemplateService {
   private Map<String, List<String>> templatePlaceholderMap;
 
   @Inject
-  public TemplateService(NotificationAppConfig config) {
+  public TemplateService(TemplateConfig config) {
     this.templateIdMap = config.getTemplateIdMap();
     this.templatePlaceholderMap = config.getTemplatePlaceholderMap();
   }
