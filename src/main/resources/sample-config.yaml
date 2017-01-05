@@ -1,6 +1,4 @@
 notificationRetryJobCron: 0 0,5,10,15,20,25,30,35,40,45,50,55 * * * ? # every 5 minutes
-#notificationRetryJobCron: 0 0/1 * 1/1 * ? * # retry every 1 mins
-#notificationRetryJobCron: 0/20 * * * * ? # retry every 20 seconds
 
 notifyUrl: https://api.notifications.service.gov.uk
 notifyApiKey: 4108f2e8-7898-4284-a90e-6816883f29f6
@@ -16,9 +14,11 @@ server:
 logging:
   level: INFO
   appenders:
-    - type: console
-      includeCallerData : true
-      logFormat: '[%d{HH:mm:ss.SSS}] [%-5level] [%class{0}:%method:%line] %msg %n'
+      - type: console
+        includeCallerData : true
+        logFormat: "[%mdc{corrID}] %d [%p] %marker %logger %m%n"
+  loggers:
+     uk.gov.bis.lite.common.spire.client: TRACE
 
 database:
   driverClass: org.sqlite.JDBC
@@ -27,9 +27,9 @@ database:
     charSet: UTF-8
   maxWaitForConnection: 30s
   validationQuery: "SELECT 1"
-  initialSize: 1 # connections
-  minSize: 1 # connections
-  maxSize: 3 # connections
+  initialSize: 1
+  minSize: 1
+  maxSize: 3
   checkConnectionWhileIdle: false
   evictionInterval: 10s
   minIdleTime: 1 minute

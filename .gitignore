@@ -1,5 +1,5 @@
 .idea/
 .gradle/
 build/
-
+/src/main/resources/config.yaml
 localNotification.db

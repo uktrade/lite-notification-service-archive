@@ -11,28 +11,40 @@ sourceCompatibility = 1.8
 
 mainClassName = "uk.gov.bis.lite.notification.NotificationApp"
 
+ext.dropwizardVersion = '1.0.5'
+
 repositories {
   mavenCentral()
   maven {
     url  "http://dl.bintray.com/gov-uk-notify/maven"
   }
+  maven {
+    name "snapshots"
+    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots"
+  }
+  maven {
+    name "releases"
+    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases"
+  }
 }
 
+
 dependencies {
-  compile 'io.dropwizard:dropwizard-core:0.9.2'
-  compile 'io.dropwizard:dropwizard-db:0.9.2'
-  compile 'io.dropwizard:dropwizard-jdbi:0.9.2'
-  compile 'io.dropwizard:dropwizard-auth:0.9.2'
+  compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
+  compile "io.dropwizard:dropwizard-db:$dropwizardVersion"
+  compile "io.dropwizard:dropwizard-jdbi:$dropwizardVersion"
+  compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
   compile 'ru.vyarus:dropwizard-guicey:3.2.0'
   compile 'org.quartz-scheduler:quartz:2.1.5'
   compile 'org.xerial:sqlite-jdbc:3.8.11.2'
   compile 'org.flywaydb:flyway-core:4.0.1'
+  compile 'uk.gov.bis.lite:jersey-correlation-id:1.0'
 
   compile 'uk.gov.service.notify:notifications-java-client:2.0.0-RELEASE'
 
   testCompile 'junit:junit:4.12'
   testCompile 'org.mockito:mockito-core:1.10.19'
-  testCompile 'io.dropwizard:dropwizard-testing:0.9.2'
+  testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
   testCompile 'org.assertj:assertj-core:3.4.1'
   testCompile ('com.github.tomakehurst:wiremock:1.58') {
     exclude group: 'org.mortbay.jetty', module: 'servlet-api'
@@ -61,4 +73,4 @@ flyway {
 
 jar.enabled = false
 
-run { args 'server', 'src/main/resources/notification-config.yaml' }
+run { args 'server', 'src/main/resources/config.yaml' }
