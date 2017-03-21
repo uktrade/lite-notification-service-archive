@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
@@ -5,7 +7,14 @@ plugins {
 }
 
 group 'uk.gov.bis.lite'
-version '1.0-SNAPSHOT'
+
+if (project.hasProperty('projVersion')) {
+  project.version = project.projVersion
+} else {
+  SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd.HHmmss")
+  sdf.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"))
+  project.version = sdf.format(new Date()) + "-SNAPSHOT"
+}
 
 sourceCompatibility = 1.8
 
@@ -58,7 +67,7 @@ dependencies {
 }
 
 shadowJar {
-  baseName = 'lite-notification-service'
+  baseName = 'notification-service'
   classifier = ''
   mergeServiceFiles()
 }
@@ -74,3 +83,31 @@ flyway {
 jar.enabled = false
 
 run { args 'server', 'src/main/resources/config.yaml' }
+
+apply plugin: 'maven-publish'
+
+publishing {
+  repositories {
+    maven {
+      name "snapshots"
+      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots/"
+    }
+    maven {
+      name "releases"
+      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases/"
+    }
+    maven {
+      name "lite-builds"
+      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/lite-builds/"
+    }
+  }
+}
+
+publishing {
+  publications {
+    service(MavenPublication) {
+      artifactId 'notification-service'
+      from components.shadow
+    }
+  }
+}
