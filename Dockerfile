@@ -8,7 +8,7 @@ ENV PROJECT_NAME notification-service
 ENV JAR_FILE $PROJECT_NAME-$BUILD_VERSION.jar
 ENV CONFIG_FILE /conf/$PROJECT_NAME-config.yaml
 
-LABEL uk.gov.bis.lite.example.version=$BUILD_VERSION
+LABEL uk.gov.bis.lite.version=$BUILD_VERSION
 
 WORKDIR /opt/$PROJECT_NAME
 
