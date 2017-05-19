@@ -9,20 +9,21 @@ templateIdMap:
     ogelRegistration:registrationDenied: 60fbb15e-0896-4c0a-af07-f30a2ac80f2d
     ogelRegistration:registrationDeniedFeedback: 6e2ad997-c7d1-4fa2-8447-6fad997fefbb
     ogelRegistration:registrationBlacklisted: edbc68a0-1045-460e-a99b-67a5161f9054
+    ogelRegistration:registrationAlreadyRegistered: d3a7c82a-2860-4862-9aaa-a057b226240e
 
 templatePlaceholderMap:
     permissionsFinder:applicationReference:
     - applicationReference
     ogelRegistration:registrationComplete:
     - applicantName
-    - spireUrl
+    - registrationRef
+    - viewLicenceUrl
     ogelRegistration:adminApprovalRequired:
     - applicantName
     - customerName
     ogelRegistration:adminApprovalAccessRequest:
     - adminName
     - applicantName
-    - userId
     - emailAddress
     - customerName
     - ogelType
@@ -32,7 +33,6 @@ templatePlaceholderMap:
     - customerName
     - adminName
     - viewLicenceUrl
-    - spireUrl
     ogelRegistration:registrationApprovedSiteChanged:
     - applicantName
     - customerName
@@ -40,11 +40,11 @@ templatePlaceholderMap:
     - originalSite
     - newSite
     - viewLicenceUrl
-    - spireUrl
     ogelRegistration:userAccountConfigured:
     - applicantName
     - customerName
     - permissionLevel
+    - permissionDescription
     - authorisedSites
     ogelRegistration:registrationDenied:
     - applicantName
@@ -54,5 +54,8 @@ templatePlaceholderMap:
     - customerName
     - denialFeedback
     ogelRegistration:registrationBlacklisted:
+    - applicantName
+    - customerName
+    ogelRegistration:registrationAlreadyRegistered:
     - applicantName
     - customerName

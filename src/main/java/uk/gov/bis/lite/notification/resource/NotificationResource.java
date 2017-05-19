@@ -64,6 +64,7 @@ public class NotificationResource {
   }
 
   private Response badRequest(String message) {
+    LOGGER.error("Invalid request: {}", message);
     return Response.status(Response.Status.BAD_REQUEST)
         .entity(ImmutableMap.of("code", Response.Status.BAD_REQUEST, "message", message))
         .type(MediaType.APPLICATION_JSON_TYPE)
