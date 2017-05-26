@@ -3,3 +3,4 @@
 build/
 /src/main/resources/config.yaml
 localNotification.db
+lite-notification-service.iml
