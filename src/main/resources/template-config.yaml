@@ -32,11 +32,13 @@ templatePlaceholderMap:
     - applicantName
     - customerName
     - adminName
+    - registrationRef
     - viewLicenceUrl
     ogelRegistration:registrationApprovedSiteChanged:
     - applicantName
     - customerName
     - adminName
+    - registrationRef
     - originalSite
     - newSite
     - viewLicenceUrl
