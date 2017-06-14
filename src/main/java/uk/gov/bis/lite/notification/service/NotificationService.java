@@ -21,26 +21,16 @@ public class NotificationService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
-  private String notifyUrl;
-  private String notifyApiKey;
-  private String notifyServiceId;
-  private int maxRetryCount;
+  private final int maxRetryCount;
 
-  private NotificationClient client;
-  private NotificationDao dao;
+  private final NotificationClient client;
+  private final NotificationDao dao;
 
   @Inject
-  public NotificationService(NotificationAppConfig config, NotificationDao dao) {
-    this.notifyUrl = config.getNotifyUrl();
-    this.notifyApiKey = config.getNotifyApiKey();
-    this.notifyServiceId = config.getNotifyServiceId();
+  public NotificationService(NotificationAppConfig config, NotificationClient client, NotificationDao dao) {
     this.maxRetryCount = config.getMaxRetryCount();
+    this.client = client;
     this.dao = dao;
-  }
-
-  @Inject
-  public void init() {
-    client = new NotificationClient(notifyApiKey, notifyServiceId, notifyUrl);
   }
 
   /**

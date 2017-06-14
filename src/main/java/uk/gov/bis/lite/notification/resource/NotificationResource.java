@@ -66,7 +66,7 @@ public class NotificationResource {
   private Response badRequest(String message) {
     LOGGER.error("Invalid request: {}", message);
     return Response.status(Response.Status.BAD_REQUEST)
-        .entity(ImmutableMap.of("code", Response.Status.BAD_REQUEST, "message", message))
+        .entity(ImmutableMap.of("code", Response.Status.BAD_REQUEST.getStatusCode(), "message", message))
         .type(MediaType.APPLICATION_JSON_TYPE)
         .build();
   }
@@ -78,8 +78,10 @@ public class NotificationResource {
   private static void logParams(String template, String recipientEmail, Map<String, String> nameValueMap) {
     LOGGER.info("template: " + template);
     LOGGER.info("recipientEmail: " + recipientEmail);
-    nameValueMap.forEach((key, value) -> {
-      LOGGER.info("Key : " + key + " Value : " + value);
-    });
+    if (nameValueMap != null) {
+      nameValueMap.forEach((key, value) -> {
+        LOGGER.info("Key : " + key + " Value : " + value);
+      });
+    }
   }
 }

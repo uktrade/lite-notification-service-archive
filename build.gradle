@@ -4,6 +4,7 @@ plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
   id 'com.github.johnrengelman.shadow' version '1.2.3'
+  id "au.com.dius.pact" version "3.3.10"
 }
 
 group 'uk.gov.bis.lite'
@@ -55,6 +56,7 @@ dependencies {
   testCompile 'org.mockito:mockito-core:1.10.19'
   testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
   testCompile 'org.assertj:assertj-core:3.4.1'
+  testCompile 'au.com.dius:pact-jvm-provider-junit_2.11:3.3.10'
   testCompile ('com.github.tomakehurst:wiremock:1.58') {
     exclude group: 'org.mortbay.jetty', module: 'servlet-api'
   }

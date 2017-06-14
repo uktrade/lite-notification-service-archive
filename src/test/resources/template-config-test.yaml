@@ -1,0 +1,7 @@
+templateIdMap:
+    validTemplate: 1
+
+templatePlaceholderMap:
+    validTemplate:
+    - valid_param_1
+    - valid_param_2

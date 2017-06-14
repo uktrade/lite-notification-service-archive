@@ -5,21 +5,6 @@ notifyApiKey: 4108f2e8-7898-4284-a90e-6816883f29f6
 notifyServiceId: f3d8fb42-a34b-4d85-8ac2-a62006a197dc
 maxRetryCount: 3
 
-templateIdMap:
-    template1: 123
-    template2: 456
-    template3: 789
-
-templatePlaceholderMap:
-    template1:
-    - name1
-    template2:
-    - name1
-    - name2
-    template3:
-    - name1
-    - name2
-
 server:
   type: default
   applicationConnectors:

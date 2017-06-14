@@ -1,5 +1,6 @@
 package uk.gov.bis.lite.notification;
 
+import com.google.inject.Module;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
@@ -18,11 +19,16 @@ import uk.gov.bis.lite.notification.scheduler.NotificationScheduler;
 public class NotificationApp extends Application<NotificationAppConfig> {
 
   private GuiceBundle<NotificationAppConfig> guiceBundle;
+  private final Module module;
+
+  public NotificationApp(Module module) {
+    this.module = module;
+  }
 
   @Override
   public void initialize(Bootstrap<NotificationAppConfig> bootstrap) {
     guiceBundle = new GuiceBundle.Builder<NotificationAppConfig>()
-      .modules(new GuiceModule())
+      .modules(module)
       .installers(ResourceInstaller.class, ManagedInstaller.class)
       .extensions(NotificationResource.class, NotificationScheduler.class)
       .build();
@@ -43,7 +49,7 @@ public class NotificationApp extends Application<NotificationAppConfig> {
   }
 
   public static void main(String[] args) throws Exception {
-    new NotificationApp().run(args);
+    new NotificationApp(new GuiceModule()).run(args);
   }
 }
 
