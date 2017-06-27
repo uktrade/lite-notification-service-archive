@@ -6,7 +6,7 @@ node('jdk8') {
   slackBuildNotifier.notifyBuild("STARTED", slackChannels)
   try {
     def serviceName = 'notification-service'
-    def gitURL = "github.com/BISDigital/lite-${serviceName}"
+    def gitURL = "github.com/uktrade/lite-${serviceName}"
 
     stage('Clean workspace'){
       deleteDir()
