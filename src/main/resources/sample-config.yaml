@@ -9,7 +9,7 @@ server:
   type: default
   applicationConnectors:
     - type: http
-      port: 8098
+      port: 8080
 
 logging:
   level: INFO
