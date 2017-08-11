@@ -33,10 +33,10 @@ node('jdk8') {
       }
     }
     stage('Docker build'){
-      build job: 'new-docker-build', parameters: [[$class: 'StringParameterValue', name: 'SERVICE_NAME', value: serviceName], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: params.BUILD_VERSION], [$class: 'StringParameterValue', name: 'DOCKERFILE_PATH', value: '.']]
+      build job: 'docker-build', parameters: [[$class: 'StringParameterValue', name: 'SERVICE_NAME', value: serviceName], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: params.BUILD_VERSION], [$class: 'StringParameterValue', name: 'DOCKERFILE_PATH', value: '.']]
     }
     stage('Dev deploy'){
-      build job: 'new-release-job', parameters: [
+      build job: 'image-release', parameters: [
           [$class: 'StringParameterValue', name: 'IMAGE_NAME', value: 'svc/notification-service'],
           [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: params.BUILD_VERSION],
           [$class: 'StringParameterValue', name: 'TARGET_ENVIRONMENT', value: 'dev'],
