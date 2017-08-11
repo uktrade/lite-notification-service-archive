@@ -14,8 +14,16 @@ node('jdk8') {
     stage('Checkout files'){
       checkout scm
     }
-    stage('Gradle publish'){
+    stage('Gradle test') {
       sh 'chmod 777 gradlew'
+      try {
+        sh "./gradlew test"
+      }
+      finally {
+        step([$class: 'JUnitResultArchiver', testResults: 'build/test-results/**/*.xml'])
+      }
+    }
+    stage('Gradle publish'){
       sh "./gradlew -PprojVersion=${params.BUILD_VERSION} :publishServicePublicationToLite-buildsRepository"
     }
     stage('Tag build'){
