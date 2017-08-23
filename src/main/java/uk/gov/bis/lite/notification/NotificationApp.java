@@ -38,7 +38,6 @@ public class NotificationApp extends Application<NotificationAppConfig> {
   @Override
   public void run(NotificationAppConfig configuration, Environment environment) throws Exception {
 
-    environment.jersey().register(NotificationServiceException.ServiceExceptionMapper.class);
     environment.jersey().register(ContainerCorrelationIdFilter.class);
 
     // Perform/validate flyway migration on startup
