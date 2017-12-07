@@ -2,6 +2,9 @@ package uk.gov.bis.lite.notification;
 
 import com.google.inject.Module;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.PrincipalImpl;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -10,9 +13,9 @@ import ru.vyarus.dropwizard.guice.GuiceBundle;
 import ru.vyarus.dropwizard.guice.module.installer.feature.ManagedInstaller;
 import ru.vyarus.dropwizard.guice.module.installer.feature.jersey.ResourceInstaller;
 import uk.gov.bis.lite.common.jersey.filter.ContainerCorrelationIdFilter;
+import uk.gov.bis.lite.notification.auth.SimpleAuthenticator;
 import uk.gov.bis.lite.notification.config.GuiceModule;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
-import uk.gov.bis.lite.notification.exception.NotificationServiceException;
 import uk.gov.bis.lite.notification.resource.NotificationResource;
 import uk.gov.bis.lite.notification.scheduler.NotificationScheduler;
 
@@ -37,6 +40,12 @@ public class NotificationApp extends Application<NotificationAppConfig> {
 
   @Override
   public void run(NotificationAppConfig configuration, Environment environment) throws Exception {
+
+    environment.jersey().register(new AuthDynamicFeature(
+        new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
+            .setAuthenticator(new SimpleAuthenticator(configuration.getAdminLogin(), configuration.getAdminPassword()))
+            .setRealm("Notification Service Admin Authentication")
+            .buildAuthFilter()));
 
     environment.jersey().register(ContainerCorrelationIdFilter.class);
 
