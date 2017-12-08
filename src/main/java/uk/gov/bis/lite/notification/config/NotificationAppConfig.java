@@ -5,9 +5,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -34,10 +31,10 @@ public class NotificationAppConfig extends Configuration {
   private DataSourceFactory database = new DataSourceFactory();
 
   @NotEmpty
-  private String adminLogin;
+  private String serviceLogin;
 
   @NotEmpty
-  private String adminPassword;
+  private String servicePassword;
 
   public DataSourceFactory getDataSourceFactory() {
     return database;
@@ -63,11 +60,11 @@ public class NotificationAppConfig extends Configuration {
     return Integer.parseInt(maxRetryCount);
   }
 
-  public String getAdminLogin() {
-    return adminLogin;
+  public String getServiceLogin() {
+    return serviceLogin;
   }
 
-  public String getAdminPassword() {
-    return adminPassword;
+  public String getServicePassword() {
+    return servicePassword;
   }
 }

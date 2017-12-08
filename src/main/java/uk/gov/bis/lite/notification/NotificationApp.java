@@ -43,7 +43,7 @@ public class NotificationApp extends Application<NotificationAppConfig> {
 
     environment.jersey().register(new AuthDynamicFeature(
         new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
-            .setAuthenticator(new SimpleAuthenticator(configuration.getAdminLogin(), configuration.getAdminPassword()))
+            .setAuthenticator(new SimpleAuthenticator(configuration.getServiceLogin(), configuration.getServicePassword()))
             .setRealm("Notification Service Admin Authentication")
             .buildAuthFilter()));
 
