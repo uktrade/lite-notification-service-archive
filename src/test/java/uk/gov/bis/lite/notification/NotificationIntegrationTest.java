@@ -43,6 +43,7 @@ public class NotificationIntegrationTest {
         .queryParam("template", "validTemplate")
         .queryParam("recipientEmail", "dan.haynes@digital.bis.gov.uk")
         .request()
+        .header("Authorization", "Basic dXNlcjpwYXNzd29yZA==")
         .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON_TYPE));
 
     assertThat(response.getStatus()).isEqualTo(200);
