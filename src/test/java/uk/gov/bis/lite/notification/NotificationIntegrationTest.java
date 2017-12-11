@@ -1,5 +1,6 @@
 package uk.gov.bis.lite.notification;
 
+import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +38,24 @@ public class NotificationIntegrationTest {
 
     JerseyClient client = new JerseyClientBuilder().build();
 
-    String requestJson = "{\"valid_param_1\": \"value1\", \"valid_param_2\": \"value2\"}";
+    String requestJson = fixture("fixture/integration/request.json");
+
+    Response response = client.target("http://localhost:8090/notification/send-email")
+        .queryParam("template", "validTemplate")
+        .queryParam("recipientEmail", "dan.haynes@digital.bis.gov.uk")
+        .request()
+        .header("Authorization", "Basic dXNlcjpwYXNzd29yZA==")
+        .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON_TYPE));
+
+    assertThat(response.getStatus()).isEqualTo(200);
+  }
+
+  @Test
+  public void testNotificationUnauthorized() throws Exception {
+
+    JerseyClient client = new JerseyClientBuilder().build();
+
+    String requestJson = fixture("fixture/integration/request.json");
 
     Response response = client.target("http://localhost:8090/notification/send-email")
         .queryParam("template", "validTemplate")
@@ -45,7 +63,6 @@ public class NotificationIntegrationTest {
         .request()
         .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON_TYPE));
 
-    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(response.getStatus()).isEqualTo(401);
   }
-
 }

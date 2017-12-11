@@ -11,6 +11,7 @@ import uk.gov.bis.lite.notification.service.TemplateService;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,6 +35,7 @@ public class NotificationResource {
   }
 
   @POST
+  @PermitAll
   @Consumes("application/json")
   @Produces("application/json")
   @Path("/send-email")
