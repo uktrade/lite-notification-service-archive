@@ -2,8 +2,8 @@ package uk.gov.bis.lite.notification.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
-import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
+import uk.gov.bis.lite.common.paas.db.SchemaAwareDataSourceFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ public class NotificationAppConfig extends Configuration {
   @Valid
   @NotNull
   @JsonProperty("database")
-  private DataSourceFactory database = new DataSourceFactory();
+  private SchemaAwareDataSourceFactory dataSourceFactory;
 
   @NotEmpty
   private String serviceLogin;
@@ -36,8 +36,8 @@ public class NotificationAppConfig extends Configuration {
   @NotEmpty
   private String servicePassword;
 
-  public DataSourceFactory getDataSourceFactory() {
-    return database;
+  public SchemaAwareDataSourceFactory getDataSourceFactory() {
+    return dataSourceFactory;
   }
 
   public String getNotificationRetryJobCron() {

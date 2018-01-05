@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.module.support.ConfigurationAwareModule;
 import uk.gov.bis.lite.notification.dao.NotificationDao;
 import uk.gov.bis.lite.notification.dao.NotificationDaoImpl;
+import uk.gov.bis.lite.notification.service.NotificationService;
+import uk.gov.bis.lite.notification.service.NotificationServiceImpl;
 import uk.gov.bis.lite.notification.service.TemplateService;
 import uk.gov.service.notify.NotificationClient;
 
@@ -33,6 +35,7 @@ public class GuiceModule extends AbstractModule implements ConfigurationAwareMod
   @Override
   protected void configure() {
     bind(NotificationDao.class).to(NotificationDaoImpl.class);
+    bind(NotificationService.class).to(NotificationServiceImpl.class);
   }
 
   @Provides

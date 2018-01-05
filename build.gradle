@@ -25,6 +25,7 @@ ext.dropwizardVersion = '1.0.5'
 
 repositories {
   mavenCentral()
+  jcenter()
   maven {
     url  "http://dl.bintray.com/gov-uk-notify/maven"
   }
@@ -46,12 +47,13 @@ dependencies {
   compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
   compile 'ru.vyarus:dropwizard-guicey:3.2.0'
   compile 'org.quartz-scheduler:quartz:2.1.5'
-  compile 'org.xerial:sqlite-jdbc:3.8.11.2'
+  compile 'org.postgresql:postgresql:42.1.4'
   compile 'org.flywaydb:flyway-core:4.0.1'
   compile 'net.logstash.logback:logstash-logback-encoder:4.10'
   compile 'ch.qos.logback.contrib:logback-jackson:0.1.5'
   compile 'uk.gov.bis.lite:json-console-appender:1.1'
   compile 'uk.gov.bis.lite:jersey-correlation-id:1.0'
+  compile 'uk.gov.bis.lite:paas-utils:1.0'
 
   compile 'uk.gov.service.notify:notifications-java-client:2.0.0-RELEASE'
 
@@ -69,6 +71,9 @@ dependencies {
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
     exclude group: 'junit', module: 'junit'
   }
+
+  testCompile 'ru.yandex.qatools.embed:postgresql-embedded:2.6'
+  testCompile 'com.h2database:h2:1.4.196'
 }
 
 shadowJar {
@@ -82,7 +87,7 @@ build {
 }
 
 flyway {
-  url = 'jdbc:sqlite:localNotification.db'
+  url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=notificationsvc'
 }
 
 jar.enabled = false

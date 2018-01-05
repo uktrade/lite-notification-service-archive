@@ -50,6 +50,10 @@ public class NotificationApp extends Application<NotificationAppConfig> {
     environment.jersey().register(ContainerCorrelationIdFilter.class);
 
     // Perform/validate flyway migration on startup
+    flywayMigrate(configuration);
+  }
+
+  protected void flywayMigrate(NotificationAppConfig configuration) {
     DataSourceFactory dataSourceFactory = configuration.getDataSourceFactory();
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSourceFactory.getUrl(), dataSourceFactory.getUser(), dataSourceFactory.getPassword());

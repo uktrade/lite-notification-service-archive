@@ -22,7 +22,7 @@ public class PactProvider {
 
   @ClassRule
   public static DropwizardAppRule<NotificationAppConfig> RULE =
-      new DropwizardAppRule<>(NotificationIntegrationTestApp.class, resourceFilePath("service-test.yaml"));
+      new DropwizardAppRule<>(NotificationIntegrationPactApp.class, resourceFilePath("service-test-pact.yaml"));
 
   @TestTarget
   public final Target target = new HttpTarget(RULE.getLocalPort());

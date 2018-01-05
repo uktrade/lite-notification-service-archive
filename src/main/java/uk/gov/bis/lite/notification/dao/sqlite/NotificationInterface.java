@@ -34,5 +34,5 @@ public interface NotificationInterface {
               "WHERE  ID = :id")
   Integer updateForRetry(@Bind("status") String status,
                          @Bind("retryCount") int retryCount,
-                         @Bind("id") int id);
+                         @Bind("id") long id);
 }
