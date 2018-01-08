@@ -21,7 +21,7 @@ sourceCompatibility = 1.8
 
 mainClassName = "uk.gov.bis.lite.notification.NotificationApp"
 
-ext.dropwizardVersion = '1.0.5'
+ext.dropwizardVersion = '1.2.2'
 
 repositories {
   mavenCentral()
