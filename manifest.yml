@@ -1,0 +1,9 @@
+---
+applications:
+- name: lite-notification-service-dev
+  buildpack: java_buildpack
+  path: build/libs/lite-notification-service-1.0-SNAPSHOT.jar
+  memory: 768M
+  instances: 1
+  env:
+    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server paas-config.yaml" }'

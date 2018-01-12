@@ -1,0 +1,39 @@
+notificationRetryJobCron: 0 0,5,10,15,20,25,30,35,40,45,50,55 * * * ? # every 5 minutes
+
+notifyUrl: ${NOTIFY_URL}
+notifyApiKey: ${NOTIFY_API_KEY}
+notifyServiceId: ${NOTIFY_SERVICE_ID}
+maxRetryCount: 3
+
+server:
+  type: default
+  applicationConnectors:
+    - type: http
+      port: ${PORT}
+
+logging:
+  level: INFO
+  appenders:
+      - type: console
+        includeCallerData : true
+        logFormat: "[%mdc{corrID}] %d [%p] %marker %logger %m%n"
+  loggers:
+     uk.gov.bis.lite.common.spire.client: TRACE
+
+database:
+  driverClass: org.postgresql.Driver
+  url: ${VCAP_JDBC_URL}
+  schema: ${DATABASE_SCHEMA}
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 30s
+  validationQuery: "SELECT 1"
+  initialSize: 1
+  minSize: 1
+  maxSize: 3
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+serviceLogin: ${SERVICE_LOGIN}
+servicePassword: ${SERVICE_PASSWORD}

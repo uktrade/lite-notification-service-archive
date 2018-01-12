@@ -1,7 +1,5 @@
 package uk.gov.bis.lite.notification;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-
 import au.com.dius.pact.provider.junit.PactRunner;
 import au.com.dius.pact.provider.junit.Provider;
 import au.com.dius.pact.provider.junit.State;
@@ -22,7 +20,7 @@ public class PactProvider {
 
   @ClassRule
   public static DropwizardAppRule<NotificationAppConfig> RULE =
-      new DropwizardAppRule<>(NotificationIntegrationPactApp.class, resourceFilePath("service-test-pact.yaml"));
+      new DropwizardAppRule<>(NotificationIntegrationPactApp.class, "service-test-pact.yaml");
 
   @TestTarget
   public final Target target = new HttpTarget(RULE.getLocalPort());

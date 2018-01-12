@@ -1,7 +1,6 @@
 package uk.gov.bis.lite.notification;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.yandex.qatools.embed.postgresql.distribution.Version.Main.V9_5;
 
@@ -42,7 +41,7 @@ public class NotificationIntegrationTest {
 
   @Before
   public void before() {
-    RULE = new DropwizardAppRule<>(NotificationIntegrationTestApp.class, resourceFilePath("service-test.yaml"));
+    RULE = new DropwizardAppRule<>(NotificationIntegrationTestApp.class, "service-test.yaml");
     RULE.getTestSupport().before();
 
     SchemaAwareDataSourceFactory dataSourceFactory = RULE.getConfiguration().getDataSourceFactory();

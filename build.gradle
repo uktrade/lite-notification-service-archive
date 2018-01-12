@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
@@ -12,9 +10,7 @@ group 'uk.gov.bis.lite'
 if (project.hasProperty('projVersion')) {
   project.version = project.projVersion
 } else {
-  SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd.HHmmss")
-  sdf.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"))
-  project.version = sdf.format(new Date()) + "-SNAPSHOT"
+  project.version = "1.0-SNAPSHOT"
 }
 
 sourceCompatibility = 1.8
@@ -27,7 +23,7 @@ repositories {
   mavenCentral()
   jcenter()
   maven {
-    url  "http://dl.bintray.com/gov-uk-notify/maven"
+    url "http://dl.bintray.com/gov-uk-notify/maven"
   }
   maven {
     name "snapshots"
@@ -62,12 +58,12 @@ dependencies {
   testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
   testCompile 'org.assertj:assertj-core:3.4.1'
   testCompile 'au.com.dius:pact-jvm-provider-junit_2.11:3.3.10'
-  testCompile ('com.github.tomakehurst:wiremock:2.7.1') {
+  testCompile('com.github.tomakehurst:wiremock:2.7.1') {
     exclude group: 'org.mortbay.jetty', module: 'servlet-api'
   }
   testCompile 'org.skyscreamer:jsonassert:1.3.0'
 
-  testCompile ('org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.23') {
+  testCompile('org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.23') {
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
     exclude group: 'junit', module: 'junit'
   }
@@ -92,7 +88,7 @@ flyway {
 
 jar.enabled = false
 
-run { args 'server', 'src/main/resources/config.yaml' }
+run { args 'server', 'config.yaml' }
 
 apply plugin: 'maven-publish'
 
