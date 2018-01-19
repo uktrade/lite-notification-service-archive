@@ -7,11 +7,7 @@ plugins {
 
 group 'uk.gov.bis.lite'
 
-if (project.hasProperty('projVersion')) {
-  project.version = project.projVersion
-} else {
-  project.version = "1.0-SNAPSHOT"
-}
+project.version = project.hasProperty('projVersion') ? project.projVersion : '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -27,11 +23,11 @@ repositories {
   }
   maven {
     name "snapshots"
-    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots"
+    url "https://nexus.ci.uktrade.io/repository/maven-snapshots"
   }
   maven {
     name "releases"
-    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases"
+    url "https://nexus.ci.uktrade.io/repository/maven-releases"
   }
 }
 
@@ -92,19 +88,18 @@ run { args 'server', 'config.yaml' }
 
 apply plugin: 'maven-publish'
 
+def nexusUsername = project.hasProperty('nexusUsername') ? project.nexusUsername : ''
+def nexusPassword = project.hasProperty('nexusPassword') ? project.nexusPassword : ''
+
 publishing {
   repositories {
     maven {
-      name "snapshots"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots/"
-    }
-    maven {
-      name "releases"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases/"
-    }
-    maven {
       name "lite-builds"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/lite-builds/"
+      url "https://nexus.ci.uktrade.io/repository/lite-builds/"
+      credentials {
+        username nexusUsername
+        password nexusPassword
+      }
     }
   }
 }
@@ -112,7 +107,7 @@ publishing {
 publishing {
   publications {
     service(MavenPublication) {
-      artifactId 'notification-service'
+      artifactId 'lite-notification-service'
       from components.shadow
     }
   }
