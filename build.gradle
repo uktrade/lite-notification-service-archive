@@ -1,7 +1,7 @@
 plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
-  id 'com.github.johnrengelman.shadow' version '1.2.3'
+  id 'com.github.johnrengelman.shadow' version '2.0.2'
   id "au.com.dius.pact" version "3.3.10"
 }
 
@@ -106,9 +106,8 @@ publishing {
 
 publishing {
   publications {
-    service(MavenPublication) {
-      artifactId 'lite-notification-service'
-      from components.shadow
+    shadow(MavenPublication) { publication ->
+      project.shadow.component(publication)
     }
   }
 }
