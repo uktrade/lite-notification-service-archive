@@ -13,7 +13,7 @@ public class NotificationData {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationData.class);
 
-  private int id;
+  private long id;
   private String templateId;
   private Type type;
   private String recipientEmail;
@@ -30,7 +30,7 @@ public class NotificationData {
     CREATED, SUCCESS, RETRY, FAILED;
   }
 
-  public NotificationData(int id) {
+  public NotificationData(long id) {
     this.id = id;
   }
 
@@ -70,7 +70,7 @@ public class NotificationData {
     return nameValueJson;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 

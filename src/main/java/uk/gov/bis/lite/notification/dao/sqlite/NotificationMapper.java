@@ -12,7 +12,7 @@ public class NotificationMapper implements ResultSetMapper<NotificationData> {
   @Override
   public NotificationData map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 
-    NotificationData data = new NotificationData(r.getInt("ID"));
+    NotificationData data = new NotificationData(r.getLong("ID"));
     data.setStatus(NotificationData.Status.valueOf(r.getString("STATUS")));
     data.setType(NotificationData.Type.valueOf(r.getString("TYPE")));
     data.setTemplateId(r.getString("TEMPLATE_ID"));

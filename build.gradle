@@ -1,40 +1,33 @@
-import java.text.SimpleDateFormat
-
 plugins {
   id 'application'
   id 'org.flywaydb.flyway' version '4.0.1'
-  id 'com.github.johnrengelman.shadow' version '1.2.3'
+  id 'com.github.johnrengelman.shadow' version '2.0.2'
   id "au.com.dius.pact" version "3.3.10"
 }
 
 group 'uk.gov.bis.lite'
 
-if (project.hasProperty('projVersion')) {
-  project.version = project.projVersion
-} else {
-  SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd.HHmmss")
-  sdf.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"))
-  project.version = sdf.format(new Date()) + "-SNAPSHOT"
-}
+project.version = project.hasProperty('projVersion') ? project.projVersion : '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
 mainClassName = "uk.gov.bis.lite.notification.NotificationApp"
 
-ext.dropwizardVersion = '1.0.5'
+ext.dropwizardVersion = '1.2.2'
 
 repositories {
   mavenCentral()
+  jcenter()
   maven {
-    url  "http://dl.bintray.com/gov-uk-notify/maven"
+    url "http://dl.bintray.com/gov-uk-notify/maven"
   }
   maven {
     name "snapshots"
-    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots"
+    url "https://nexus.ci.uktrade.io/repository/maven-snapshots"
   }
   maven {
     name "releases"
-    url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases"
+    url "https://nexus.ci.uktrade.io/repository/maven-releases"
   }
 }
 
@@ -46,12 +39,13 @@ dependencies {
   compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
   compile 'ru.vyarus:dropwizard-guicey:3.2.0'
   compile 'org.quartz-scheduler:quartz:2.1.5'
-  compile 'org.xerial:sqlite-jdbc:3.8.11.2'
+  compile 'org.postgresql:postgresql:42.1.4'
   compile 'org.flywaydb:flyway-core:4.0.1'
   compile 'net.logstash.logback:logstash-logback-encoder:4.10'
   compile 'ch.qos.logback.contrib:logback-jackson:0.1.5'
   compile 'uk.gov.bis.lite:json-console-appender:1.1'
   compile 'uk.gov.bis.lite:jersey-correlation-id:1.0'
+  compile 'uk.gov.bis.lite:paas-utils:1.0'
 
   compile 'uk.gov.service.notify:notifications-java-client:2.0.0-RELEASE'
 
@@ -60,15 +54,18 @@ dependencies {
   testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
   testCompile 'org.assertj:assertj-core:3.4.1'
   testCompile 'au.com.dius:pact-jvm-provider-junit_2.11:3.3.10'
-  testCompile ('com.github.tomakehurst:wiremock:2.7.1') {
+  testCompile('com.github.tomakehurst:wiremock:2.7.1') {
     exclude group: 'org.mortbay.jetty', module: 'servlet-api'
   }
   testCompile 'org.skyscreamer:jsonassert:1.3.0'
 
-  testCompile ('org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.23') {
+  testCompile('org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.23') {
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
     exclude group: 'junit', module: 'junit'
   }
+
+  testCompile 'ru.yandex.qatools.embed:postgresql-embedded:2.6'
+  testCompile 'com.h2database:h2:1.4.196'
 }
 
 shadowJar {
@@ -82,37 +79,35 @@ build {
 }
 
 flyway {
-  url = 'jdbc:sqlite:localNotification.db'
+  url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=notificationsvc'
 }
 
 jar.enabled = false
 
-run { args 'server', 'src/main/resources/config.yaml' }
+run { args 'server', 'config.yaml' }
 
 apply plugin: 'maven-publish'
+
+def nexusUsername = project.hasProperty('nexusUsername') ? project.nexusUsername : ''
+def nexusPassword = project.hasProperty('nexusPassword') ? project.nexusPassword : ''
 
 publishing {
   repositories {
     maven {
-      name "snapshots"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-snapshots/"
-    }
-    maven {
-      name "releases"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/maven-releases/"
-    }
-    maven {
       name "lite-builds"
-      url "http://nexus.mgmt.licensing.service.trade.gov.uk.test/repository/lite-builds/"
+      url "https://nexus.ci.uktrade.io/repository/lite-builds/"
+      credentials {
+        username nexusUsername
+        password nexusPassword
+      }
     }
   }
 }
 
 publishing {
   publications {
-    service(MavenPublication) {
-      artifactId 'notification-service'
-      from components.shadow
+    shadow(MavenPublication) { publication ->
+      project.shadow.component(publication)
     }
   }
 }

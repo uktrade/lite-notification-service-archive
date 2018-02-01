@@ -5,6 +5,8 @@ import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -13,6 +15,7 @@ import ru.vyarus.dropwizard.guice.GuiceBundle;
 import ru.vyarus.dropwizard.guice.module.installer.feature.ManagedInstaller;
 import ru.vyarus.dropwizard.guice.module.installer.feature.jersey.ResourceInstaller;
 import uk.gov.bis.lite.common.jersey.filter.ContainerCorrelationIdFilter;
+import uk.gov.bis.lite.common.paas.db.CloudFoundryEnvironmentSubstitutor;
 import uk.gov.bis.lite.notification.auth.SimpleAuthenticator;
 import uk.gov.bis.lite.notification.config.GuiceModule;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
@@ -30,11 +33,14 @@ public class NotificationApp extends Application<NotificationAppConfig> {
 
   @Override
   public void initialize(Bootstrap<NotificationAppConfig> bootstrap) {
+    bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+        new ResourceConfigurationSourceProvider(), new CloudFoundryEnvironmentSubstitutor()));
+
     guiceBundle = new GuiceBundle.Builder<NotificationAppConfig>()
-      .modules(module)
-      .installers(ResourceInstaller.class, ManagedInstaller.class)
-      .extensions(NotificationResource.class, NotificationScheduler.class)
-      .build();
+        .modules(module)
+        .installers(ResourceInstaller.class, ManagedInstaller.class)
+        .extensions(NotificationResource.class, NotificationScheduler.class)
+        .build();
     bootstrap.addBundle(guiceBundle);
   }
 
@@ -50,6 +56,10 @@ public class NotificationApp extends Application<NotificationAppConfig> {
     environment.jersey().register(ContainerCorrelationIdFilter.class);
 
     // Perform/validate flyway migration on startup
+    flywayMigrate(configuration);
+  }
+
+  protected void flywayMigrate(NotificationAppConfig configuration) {
     DataSourceFactory dataSourceFactory = configuration.getDataSourceFactory();
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSourceFactory.getUrl(), dataSourceFactory.getUser(), dataSourceFactory.getPassword());

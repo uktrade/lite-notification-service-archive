@@ -1,17 +1,20 @@
 package uk.gov.bis.lite.notification;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.yandex.qatools.embed.postgresql.distribution.Version.Main.V9_5;
 
-import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.flywaydb.core.Flyway;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
+import uk.gov.bis.lite.common.paas.db.SchemaAwareDataSourceFactory;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
 
 import javax.ws.rs.client.Entity;
@@ -20,17 +23,37 @@ import javax.ws.rs.core.Response;
 
 public class NotificationIntegrationTest {
 
-  @Rule
-  public final DropwizardAppRule<NotificationAppConfig> RULE =
-      new DropwizardAppRule<>(NotificationIntegrationTestApp.class, resourceFilePath("service-test.yaml"));
+  private static EmbeddedPostgres postgres;
 
-  private Flyway flyway = new Flyway();
+  public DropwizardAppRule<NotificationAppConfig> RULE;
+  private Flyway flyway;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    postgres = new EmbeddedPostgres(V9_5);
+    postgres.start("localhost", 5432, "dbName", "postgres", "password");
+  }
+
+  @AfterClass
+  public static void afterClass() {
+    postgres.stop();
+  }
 
   @Before
-  public void setupDatabase() {
-    DataSourceFactory f = RULE.getConfiguration().getDataSourceFactory();
-    flyway.setDataSource(f.getUrl(), f.getUser(), f.getPassword());
+  public void before() {
+    RULE = new DropwizardAppRule<>(NotificationIntegrationTestApp.class, "service-test.yaml");
+    RULE.getTestSupport().before();
+
+    SchemaAwareDataSourceFactory dataSourceFactory = RULE.getConfiguration().getDataSourceFactory();
+    flyway = new Flyway();
+    flyway.setDataSource(dataSourceFactory.getUrl(), dataSourceFactory.getUser(), dataSourceFactory.getPassword());
     flyway.migrate();
+  }
+
+  @After
+  public void after() {
+    RULE.getTestSupport().after();
+    flyway.clean();
   }
 
   @Test
