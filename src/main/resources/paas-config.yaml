@@ -28,9 +28,9 @@ database:
     charSet: UTF-8
   maxWaitForConnection: 30s
   validationQuery: "SELECT 1"
-  initialSize: 1
   minSize: ${DB_POOL_MIN_SIZE}
   maxSize: ${DB_POOL_MAX_SIZE}
+  initialSize: ${DB_POOL_MIN_SIZE}
   checkConnectionWhileIdle: false
   evictionInterval: 10s
   minIdleTime: 1 minute
