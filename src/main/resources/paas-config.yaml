@@ -29,8 +29,8 @@ database:
   maxWaitForConnection: 30s
   validationQuery: "SELECT 1"
   initialSize: 1
-  minSize: 1
-  maxSize: 3
+  minSize: ${DB_POOL_MIN_SIZE}
+  maxSize: ${DB_POOL_MAX_SIZE}
   checkConnectionWhileIdle: false
   evictionInterval: 10s
   minIdleTime: 1 minute
