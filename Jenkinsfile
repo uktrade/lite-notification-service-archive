@@ -47,6 +47,20 @@ pipeline {
       }
     }
 
+    stage('sonarqube') {
+      steps {
+        script {
+          deployer.inside {
+            withSonarQubeEnv('sonarqube') {
+              sh 'chmod 777 gradlew'
+              sh './gradlew compileJava compileTestJava -i'
+              sh "${env.SONAR_SCANNER_PATH}/sonar-scanner -Dsonar.projectVersion=${env.BUILD_VERSION}"
+            }
+          }
+        }
+      }
+    }
+
     stage('deploy') {
       steps {
         sh 'echo $buildVersion'
