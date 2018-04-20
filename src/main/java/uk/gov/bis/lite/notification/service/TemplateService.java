@@ -4,25 +4,20 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.gov.bis.lite.notification.config.NotificationAppConfig;
 import uk.gov.bis.lite.notification.config.TemplateConfig;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Singleton
 public class TemplateService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
-
-  private Map<String, String> templateIdMap;
-  private Map<String, List<String>> templatePlaceholderMap;
+  private final Map<String, String> templateIdMap;
+  private final Map<String, List<String>> templatePlaceholderMap;
 
   @Inject
   public TemplateService(TemplateConfig config) {
@@ -42,17 +37,9 @@ public class TemplateService {
    * Empty and null nameValueMap and placeholder list are considered equivalent
    */
   public boolean isMatchedForPlaceholders(String template, Map<String, String> nameValueMap) {
-    boolean valid = false;
-    List<String> placeholders = templatePlaceholderMap.get(template);
-    if (placeholders == null && nameValueMap == null) {
-      valid = true;
-    } else if ((placeholders == null && nameValueMap.isEmpty()) || (nameValueMap == null && placeholders.isEmpty())) {
-      valid = true;
-    } else if (placeholders != null && nameValueMap != null && nameValueMap.keySet().containsAll(placeholders)
-        && placeholders.containsAll(nameValueMap.keySet())) {
-      valid = true;
-    }
-    return valid;
+    List<String> placeholders = templatePlaceholderMap.getOrDefault(template, new ArrayList<>());
+    Set<String> keySet = nameValueMap == null ? new HashSet<>() : nameValueMap.keySet();
+    return placeholders.containsAll(keySet) && keySet.containsAll(placeholders);
   }
 
   /**
@@ -60,7 +47,7 @@ public class TemplateService {
    * the nameValueMap provided
    */
   public String getMismatchForPlaceholdersDetail(String template, Map<String, String> nameValueMap) {
-    Set<String> placeHolderSet = templatePlaceholderMap.get(template).stream().collect(Collectors.toSet());
+    Set<String> placeHolderSet = new HashSet<>(templatePlaceholderMap.get(template));
     Set<String> nameValueSet = nameValueMap != null ? nameValueMap.keySet() : new HashSet<>();
 
     Sets.SetView<String> missingDifference = Sets.difference(placeHolderSet, nameValueSet);

@@ -10,10 +10,6 @@ import java.util.List;
 
 public interface NotificationInterface {
 
-  @SqlQuery("SELECT * FROM LOCAL_NOTIFICATION WHERE ID = :id")
-  @Mapper(NotificationMapper.class)
-  NotificationData findById(@Bind("id") int id);
-
   @SqlUpdate("INSERT INTO LOCAL_NOTIFICATION (TEMPLATE_ID, RECIPIENT_EMAIL, NAME_VALUE_JSON, STATUS, RETRY_COUNT, TYPE) " +
       "VALUES (:templateId, :recipientEmail, :nameValueJson, :status, :retryCount, :type)")
   void insert(@Bind("templateId") String templateId,
@@ -28,11 +24,8 @@ public interface NotificationInterface {
   @Mapper(NotificationMapper.class)
   List<NotificationData> getRetries();
 
-  @SqlUpdate("UPDATE LOCAL_NOTIFICATION " +
-              "SET    STATUS = :status, " +
-              "       RETRY_COUNT = :retryCount " +
-              "WHERE  ID = :id")
-  Integer updateForRetry(@Bind("status") String status,
-                         @Bind("retryCount") int retryCount,
-                         @Bind("id") long id);
+  @SqlUpdate("UPDATE LOCAL_NOTIFICATION SET STATUS = :status, RETRY_COUNT = :retryCount WHERE  ID = :id")
+  void updateForRetry(@Bind("status") String status,
+                      @Bind("retryCount") int retryCount,
+                      @Bind("id") long id);
 }

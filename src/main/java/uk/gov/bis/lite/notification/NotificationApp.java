@@ -24,7 +24,6 @@ import uk.gov.bis.lite.notification.scheduler.NotificationScheduler;
 
 public class NotificationApp extends Application<NotificationAppConfig> {
 
-  private GuiceBundle<NotificationAppConfig> guiceBundle;
   private final Module module;
 
   public NotificationApp(Module module) {
@@ -36,7 +35,7 @@ public class NotificationApp extends Application<NotificationAppConfig> {
     bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
         new ResourceConfigurationSourceProvider(), new CloudFoundryEnvironmentSubstitutor()));
 
-    guiceBundle = new GuiceBundle.Builder<NotificationAppConfig>()
+    GuiceBundle<NotificationAppConfig> guiceBundle = new GuiceBundle.Builder<NotificationAppConfig>()
         .modules(module)
         .installers(ResourceInstaller.class, ManagedInstaller.class)
         .extensions(NotificationResource.class, NotificationScheduler.class)

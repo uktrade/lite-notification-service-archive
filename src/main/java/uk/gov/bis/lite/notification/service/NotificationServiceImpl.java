@@ -64,13 +64,13 @@ public class NotificationServiceImpl implements NotificationService {
    * Attempts send, updates retry data accordingly
    */
   private void doRetryNotification(NotificationData data) {
-    LOGGER.error("doRetryNotification: " + data.getId());
+    LOGGER.error("doRetryNotification: {}", data.getId());
     boolean success = doSendNotification(data);
     if (success) {
       data.setStatus(NotificationData.Status.SUCCESS);
     } else {
       data.incrementRetryCount();
-      if(data.getRetryCount() >= maxRetryCount) {
+      if (data.getRetryCount() >= maxRetryCount) {
         data.setStatus(NotificationData.Status.FAILED);
       }
     }
@@ -87,8 +87,9 @@ public class NotificationServiceImpl implements NotificationService {
       NotificationResponse response = client.sendEmail(data.getTemplateId(), data.getRecipientEmail(), data.getNameValueMap());
       if (response != null) {
         sent = true;
-      } else {
         logResponse(response);
+      } else {
+        LOGGER.warn("Notification is null");
       }
     } catch (NotificationClientException e) {
       LOGGER.error("NotificationClientException", e);
@@ -106,7 +107,8 @@ public class NotificationServiceImpl implements NotificationService {
       String status = notifyNotification.getStatus();
       if (status != null) {
         if (!(status.equals("created") || status.equals("sending") || status.equals("delivered"))) {
-          LOGGER.warn("Notification with status: " + status); // status probably "failed"
+          // status probably "failed"
+          LOGGER.warn("Notification with status: {}", status);
         }
       } else {
         LOGGER.warn("Notification with NULL status");
@@ -114,14 +116,16 @@ public class NotificationServiceImpl implements NotificationService {
     } catch (NotificationClientException e) {
       LOGGER.warn("NotificationClientException", e);
     } catch (JSONException e) {
-      LOGGER.warn("JSONException"); // this exception gets thrown quite frequently, so not logging full stack trace
+      // this exception gets thrown quite frequently, so not logging full stack trace
+      LOGGER.warn("JSONException");
     }
   }
 
   /**
    * Create and return new instance of NotificationData
    */
-  private NotificationData initEmailNotificationData(String templateId, String recipientEmail, HashMap<String, String> notifyMap) {
+  private NotificationData initEmailNotificationData(String templateId, String recipientEmail,
+                                                     HashMap<String, String> notifyMap) {
     NotificationData data = new NotificationData(NotificationData.Type.EMAIL, templateId);
     data.setRecipientEmail(recipientEmail);
     data.setNameValueJson(notifyMap);

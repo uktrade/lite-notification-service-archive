@@ -78,12 +78,10 @@ public class NotificationResource {
   }
 
   private static void logParams(String template, String recipientEmail, Map<String, String> nameValueMap) {
-    LOGGER.info("template: " + template);
-    LOGGER.info("recipientEmail: " + recipientEmail);
+    LOGGER.info("template: {}", template);
+    LOGGER.info("recipientEmail: {}", recipientEmail);
     if (nameValueMap != null) {
-      nameValueMap.forEach((key, value) -> {
-        LOGGER.info("Key : " + key + " Value : " + value);
-      });
+      nameValueMap.forEach((key, value) -> LOGGER.info("Key : {}  Value : {}", key, value));
     }
   }
 }
