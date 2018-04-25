@@ -25,7 +25,7 @@ public class NotificationIntegrationTest {
 
   private static EmbeddedPostgres postgres;
 
-  public DropwizardAppRule<NotificationAppConfig> RULE;
+  private DropwizardAppRule<NotificationAppConfig> RULE;
   private Flyway flyway;
 
   @BeforeClass

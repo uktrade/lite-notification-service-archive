@@ -12,14 +12,13 @@ import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
 
-
 @RunWith(PactRunner.class)
 @Provider("lite-notification-service")
 @PactBroker(host = "pact-broker.ci.uktrade.io", port = "80")
 public class PactProvider {
 
   @ClassRule
-  public static DropwizardAppRule<NotificationAppConfig> RULE =
+  public static final DropwizardAppRule<NotificationAppConfig> RULE =
       new DropwizardAppRule<>(NotificationIntegrationPactApp.class, "service-test-pact.yaml");
 
   @TestTarget

@@ -1,16 +1,20 @@
 package uk.gov.bis.lite.notification.scheduler;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import com.google.inject.Inject;
 import io.dropwizard.lifecycle.Managed;
-import org.quartz.*;
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.bis.lite.notification.config.NotificationAppConfig;
 import uk.gov.bis.lite.notification.service.NotificationService;
-
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 public class NotificationScheduler implements Managed {
 
