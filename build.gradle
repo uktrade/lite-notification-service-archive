@@ -1,6 +1,5 @@
 plugins {
   id 'application'
-  id 'org.flywaydb.flyway' version '4.0.1'
   id 'com.github.johnrengelman.shadow' version '2.0.2'
   id "au.com.dius.pact" version "3.5.13"
   id 'jacoco'
@@ -32,39 +31,19 @@ repositories {
   }
 }
 
-
 dependencies {
   compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
-  compile "io.dropwizard:dropwizard-db:$dropwizardVersion"
-  compile "io.dropwizard:dropwizard-jdbi:$dropwizardVersion"
-  compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
   compile 'ru.vyarus:dropwizard-guicey:3.2.0'
-  compile 'org.quartz-scheduler:quartz:2.1.5'
-  compile 'org.postgresql:postgresql:42.1.4'
-  compile 'org.flywaydb:flyway-core:4.0.1'
   compile 'uk.gov.bis.lite:json-console-appender:1.1.1'
-  compile 'uk.gov.bis.lite:jersey-correlation-id:1.0'
-  compile 'uk.gov.bis.lite:paas-utils:1.0'
-
-  compile 'uk.gov.service.notify:notifications-java-client:2.0.0-RELEASE'
+  compile 'com.amazonaws:aws-java-sdk-sns:1.11.318'
+  compile 'uk.gov.service.notify:notifications-java-client:3.9.1-RELEASE'
 
   testCompile 'junit:junit:4.12'
   testCompile 'org.mockito:mockito-core:1.10.19'
   testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
   testCompile 'org.assertj:assertj-core:3.4.1'
-  testCompile 'au.com.dius:pact-jvm-provider-junit_2.11:3.5.13'
-  testCompile('com.github.tomakehurst:wiremock:2.7.1') {
-    exclude group: 'org.mortbay.jetty', module: 'servlet-api'
-  }
-  testCompile 'org.skyscreamer:jsonassert:1.3.0'
+  testCompile 'au.com.dius:pact-jvm-consumer-junit_2.11:3.5.13'
 
-  testCompile('org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.23') {
-    exclude group: 'javax.servlet', module: 'javax.servlet-api'
-    exclude group: 'junit', module: 'junit'
-  }
-
-  testCompile 'ru.yandex.qatools.embed:postgresql-embedded:2.6'
-  testCompile 'com.h2database:h2:1.4.196'
 }
 
 shadowJar {
@@ -77,11 +56,13 @@ build {
   dependsOn shadowJar
 }
 
-flyway {
-  url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=notificationsvc'
+pact {
+  publish {
+    pactDirectory = 'target/pacts'
+    pactBrokerUrl = 'http://pact-broker.ci.uktrade.io/'
+    version = '1.0.0'
+  }
 }
-
-jar.enabled = false
 
 run { args 'server', 'config.yaml' }
 
@@ -90,8 +71,35 @@ apply plugin: 'maven-publish'
 def nexusUsername = project.hasProperty('nexusUsername') ? project.nexusUsername : ''
 def nexusPassword = project.hasProperty('nexusPassword') ? project.nexusPassword : ''
 
+task apiJar(type: Jar, dependsOn: compileJava) {
+  from sourceSets.main.output.classesDir
+  include 'uk/gov/bis/lite/notification/api/**/*'
+}
+
+task apiJarWithSources(type: Jar) {
+  from sourceSets.main.allJava
+  include 'uk/gov/bis/lite/notification/api/**/*'
+}
+
+
 publishing {
   repositories {
+    maven {
+      name "snapshots"
+      url "https://nexus.ci.uktrade.io/repository/maven-snapshots/"
+      credentials {
+        username nexusUsername
+        password nexusPassword
+      }
+    }
+    maven {
+      name "releases"
+      url "https://nexus.ci.uktrade.io/repository/maven-releases/"
+      credentials {
+        username nexusUsername
+        password nexusPassword
+      }
+    }
     maven {
       name "lite-builds"
       url "https://nexus.ci.uktrade.io/repository/lite-builds/"
@@ -101,10 +109,15 @@ publishing {
       }
     }
   }
-}
-
-publishing {
   publications {
+    api(MavenPublication) {
+      artifactId 'lite-notification-service-api'
+      version '1.0'
+      artifact apiJar
+      artifact apiJarWithSources {
+        classifier "sources"
+      }
+    }
     shadow(MavenPublication) { publication ->
       project.shadow.component(publication)
     }
