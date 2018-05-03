@@ -26,7 +26,7 @@ public class MessageQueueConsumerTest {
   private final Map<String, String> VALID_PERSONALISATION = ImmutableMap.of("validParamOne", "valueOne",
       "validParamTwo", "valueTwo");
   private final String VALID_TEMPLATE = "validTemplate";
-  private final String VALID_EMAIL = "test@test.com";
+  private final String VALID_EMAIL_ADDRESS = "test@test.com";
 
   private final NotificationClient notificationClient = mock(NotificationClient.class);
   private final MessageQueueConsumer messageQueueConsumer = new MessageQueueConsumerImpl(new MockTemplateService(),
@@ -49,10 +49,10 @@ public class MessageQueueConsumerTest {
   }
 
   @Test
-  public void handleMessageShouldReturnTrueForMessageWithBlankEmail() {
+  public void handleMessageShouldReturnTrueForMessageWithBlankEmailAddress() {
     EmailNotification emailNotification = new EmailNotification();
     emailNotification.setTemplate(VALID_TEMPLATE);
-    emailNotification.setEmail("   ");
+    emailNotification.setEmailAddress("   ");
     emailNotification.setPersonalisation(VALID_PERSONALISATION);
 
     boolean deleteMessage = messageQueueConsumer.handleMessage(toJson(emailNotification));
@@ -65,7 +65,7 @@ public class MessageQueueConsumerTest {
   public void handleMessageShouldReturnTrueForMessageWithInvalidTemplate() {
     EmailNotification emailNotification = new EmailNotification();
     emailNotification.setTemplate("invalidTemplate");
-    emailNotification.setEmail(VALID_EMAIL);
+    emailNotification.setEmailAddress(VALID_EMAIL_ADDRESS);
     emailNotification.setPersonalisation(VALID_PERSONALISATION);
 
     boolean deleteMessage = messageQueueConsumer.handleMessage(toJson(emailNotification));
@@ -78,7 +78,7 @@ public class MessageQueueConsumerTest {
   public void handleMessageShouldReturnTrueForMessageWithInvalidPersonalisation() {
     EmailNotification emailNotification = new EmailNotification();
     emailNotification.setTemplate(VALID_TEMPLATE);
-    emailNotification.setEmail(VALID_EMAIL);
+    emailNotification.setEmailAddress(VALID_EMAIL_ADDRESS);
     emailNotification.setPersonalisation(ImmutableMap.of("invalidParam", "value"));
 
     boolean deleteMessage = messageQueueConsumer.handleMessage(toJson(emailNotification));
@@ -89,31 +89,31 @@ public class MessageQueueConsumerTest {
 
   @Test
   public void handleMessageShouldReturnFalseForMessageCausingNotificationClientException() throws NotificationClientException {
-    when(notificationClient.sendEmail(eq("1"), eq(VALID_EMAIL), eq(VALID_PERSONALISATION), eq(null)))
+    when(notificationClient.sendEmail(eq("1"), eq(VALID_EMAIL_ADDRESS), eq(VALID_PERSONALISATION), eq(null)))
         .thenThrow(new NotificationClientException("An error occurred"));
 
     EmailNotification emailNotification = new EmailNotification();
     emailNotification.setTemplate(VALID_TEMPLATE);
-    emailNotification.setEmail(VALID_EMAIL);
+    emailNotification.setEmailAddress(VALID_EMAIL_ADDRESS);
     emailNotification.setPersonalisation(VALID_PERSONALISATION);
 
     boolean deleteMessage = messageQueueConsumer.handleMessage(toJson(emailNotification));
 
     assertThat(deleteMessage).isFalse();
-    verify(notificationClient).sendEmail(eq("1"), eq(VALID_EMAIL), eq(VALID_PERSONALISATION), eq(null));
+    verify(notificationClient).sendEmail(eq("1"), eq(VALID_EMAIL_ADDRESS), eq(VALID_PERSONALISATION), eq(null));
   }
 
   @Test
   public void handleMessageShouldReturnTrueForEmailedMessage() throws NotificationClientException {
     EmailNotification emailNotification = new EmailNotification();
     emailNotification.setTemplate(VALID_TEMPLATE);
-    emailNotification.setEmail(VALID_EMAIL);
+    emailNotification.setEmailAddress(VALID_EMAIL_ADDRESS);
     emailNotification.setPersonalisation(VALID_PERSONALISATION);
 
     boolean deleteMessage = messageQueueConsumer.handleMessage(toJson(emailNotification));
 
     assertThat(deleteMessage).isTrue();
-    verify(notificationClient).sendEmail(eq("1"), eq(VALID_EMAIL), eq(VALID_PERSONALISATION), eq(null));
+    verify(notificationClient).sendEmail(eq("1"), eq(VALID_EMAIL_ADDRESS), eq(VALID_PERSONALISATION), eq(null));
   }
 
   private String toJson(EmailNotification emailNotification) {

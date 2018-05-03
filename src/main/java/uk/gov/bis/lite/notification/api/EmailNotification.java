@@ -5,7 +5,7 @@ import java.util.Map;
 public class EmailNotification {
 
   private String template;
-  private String email;
+  private String emailAddress;
   private Map<String, String> personalisation;
 
   public String getTemplate() {
@@ -16,12 +16,12 @@ public class EmailNotification {
     this.template = template;
   }
 
-  public String getEmail() {
-    return email;
+  public String getEmailAddress() {
+    return emailAddress;
   }
 
-  public void setEmail(String email) {
-    this.email = email;
+  public void setEmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
   }
 
   public Map<String, String> getPersonalisation() {

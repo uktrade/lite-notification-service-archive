@@ -18,7 +18,7 @@ class PactConsumerHelper {
   static MessagePact createValidEmailNotification(MessagePactBuilder builder) {
     PactDslJsonBody body = new PactDslJsonBody()
         .stringType("template", "validTemplate")
-        .stringType("email", "user@test.com")
+        .stringType("emailAddress", "user@test.com")
         .object("personalisation")
         .stringType("validParamOne", "valueOne")
         .stringType("validParamTwo", "valueTwo")

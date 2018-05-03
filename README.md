@@ -16,7 +16,7 @@ config option. API keys are available on the [Notify admin console](https://www.
 
 This service receives messages via an `sqs` queue which are then used to send emails via `uk.gov.service.notify.NotificationClient`.
 The queue message must be json of type `uk.gov.bis.lite.notification.api.EmailNotification`.
-Queue messages with invalid `template`, `email` or `personalisation` are logged and then deleted immediately.
+Queue messages with invalid `template`, `emailAddress` or `personalisation` are logged and then deleted immediately.
 Emails that fail to be send because `uk.gov.service.notify.NotificationClient` throws an exception, are retried.
 
 The amazon credentials and queue name must be configured in the `config.yaml`.

@@ -16,6 +16,7 @@ import uk.gov.service.notify.NotificationClientException;
 
 public class OgelRegistrationPactConsumer {
 
+  // Added suffix message to lite-ogel-registration due to https://github.com/DiUS/pact-jvm/issues/610
   private final static String PROVIDER = "lite-ogel-registration-message";
   private final static String CONSUMER = "lite-notification-service";
 

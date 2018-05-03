@@ -38,8 +38,8 @@ public class MessageQueueConsumerImpl implements MessageQueueConsumer {
       validatePersonalisation(emailNotification);
       String templateId = getTemplateId(emailNotification);
       try {
-        SendEmailResponse sendEmailResponse = notificationClient.sendEmail(templateId, emailNotification.getEmail(),
-            emailNotification.getPersonalisation(), null);
+        SendEmailResponse sendEmailResponse = notificationClient.sendEmail(templateId,
+            emailNotification.getEmailAddress(), emailNotification.getPersonalisation(), null);
         LOGGER.info("Successfully sent email with message {} and received response {}", message, sendEmailResponse);
         return true;
       } catch (NotificationClientException nce) {
@@ -62,8 +62,8 @@ public class MessageQueueConsumerImpl implements MessageQueueConsumer {
   }
 
   private void validateEmail(EmailNotification emailNotification) throws SendEmailException {
-    if (StringUtils.isBlank(emailNotification.getEmail())) {
-      throw new SendEmailException("Email cannot be blank");
+    if (StringUtils.isBlank(emailNotification.getEmailAddress())) {
+      throw new SendEmailException("emailAddress cannot be blank");
     }
   }
 
