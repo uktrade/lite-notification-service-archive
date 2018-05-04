@@ -11,7 +11,7 @@ project.version = project.hasProperty('projVersion') ? project.projVersion : '1.
 
 sourceCompatibility = 1.8
 
-mainClassName = "uk.gov.bis.lite.notification.NotificationApp"
+mainClassName = "uk.gov.bis.lite.notification.NotificationApplication"
 
 ext.dropwizardVersion = '1.2.2'
 
