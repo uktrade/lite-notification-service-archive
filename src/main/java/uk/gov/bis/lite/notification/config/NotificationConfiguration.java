@@ -10,6 +10,12 @@ import javax.validation.constraints.NotNull;
 public class NotificationConfiguration extends Configuration {
 
   @NotEmpty
+  private String login;
+
+  @NotEmpty
+  private String password;
+
+  @NotEmpty
   private String notifyUrl;
 
   @NotEmpty
@@ -21,6 +27,14 @@ public class NotificationConfiguration extends Configuration {
   private AwsConfig awsConfig;
 
   public NotificationConfiguration() {
+  }
+
+  public String getLogin() {
+    return login;
+  }
+
+  public String getPassword() {
+    return password;
   }
 
   public String getNotifyUrl() {
