@@ -1,3 +1,6 @@
+login: "${BASIC_AUTH_USER}"
+password: "${BASIC_AUTH_PASSWORD}"
+
 notifyUrl: "${NOTIFY_URL}"
 notifyApiKey: "${NOTIFY_API_KEY}"
 
@@ -11,10 +14,15 @@ aws:
   sqsRetryDelaySeconds: ${AWS_SQS_RETRY_DELAY_SECONDS}
 
 server:
-  type: default
-  applicationConnectors:
-    - type: http
-      port: ${PORT}
+  type: simple
+  connector:
+    type: http
+    port: ${PORT}
+  applicationContextPath: /
+  adminContextPath: /admin
+  requestLog:
+    appenders:
+      - type: json-console-access
 
 logging:
   level: INFO
