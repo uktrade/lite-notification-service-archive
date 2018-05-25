@@ -1,4 +1,8 @@
 templateIdMap:
+    permissionsFinder:nlrDocumentToUser: 97d914e8-2be8-4dce-9b39-bb95bcb5a9b7
+    permissionsFinder:nlrDocumentToEcju: ddf5d722-7d80-4971-b944-3706132630a5
+    permissionsFinder:registeredOgelToUser: 9f47e4b6-5f43-4778-8e73-9453a2d7d4aa
+    permissionsFinder:registeredOgelToEcju: 3f3fbfbc-f7ad-483c-9735-a909fa86ad3e
     permissionsFinder:applicationReference: 09eb70ed-e5c7-4d28-87aa-553addfbcfc2 # applicationReference
     ogelRegistration:registrationComplete: 90389188-8587-4412-a973-b8e9bc67f7bd
     ogelRegistration:adminApprovalAccessRequest: 973eb1fb-cdc6-47db-a618-625d4e0e5e04
@@ -12,6 +16,26 @@ templateIdMap:
     ogelRegistration:registrationAlreadyRegistered: d3a7c82a-2860-4862-9aaa-a057b226240e
 
 templatePlaceholderMap:
+    permissionsFinder:nlrDocumentToUser:
+    - applicantName
+    - nlrDocumentUrl
+    permissionsFinder:nlrDocumentToEcju:
+    - applicantName
+    - applicationReference
+    - emailAddress
+    - companyName
+    - siteAddress
+    - nlrDocumentUrl
+    permissionsFinder:registeredOgelToUser:
+    - applicantName
+    - ogelUrl
+    permissionsFinder:registeredOgelToEcju:
+    - applicantName
+    - applicationReference
+    - emailAddress
+    - companyName
+    - siteAddress
+    - ogelUrl
     permissionsFinder:applicationReference:
     - applicationReference
     ogelRegistration:registrationComplete:
